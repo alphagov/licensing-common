@@ -1,4 +1,4 @@
-# Apply for a license
+# Apply For a Licence
 
 Apply For a Licence allows citizens and businesses to apply for licences (and similar) from local and competent authorities.
 
