@@ -9,10 +9,8 @@ from apply_for_a_licence.enums.countries import Countries
 
 
 def validate_snac_codes(snac_codes: list):
-        for code in snac_codes:
-            if code not in SnacCodes.list():
-                print(code in SnacCodes.list())
-                raise ValidationError("SNAC Codes not valid")
+    if not set(snac_codes).issubset(set(SnacCodes.list())):
+        raise ValidationError("Snac codes not valid")
 
 
 def validate_countries(countries: list):
