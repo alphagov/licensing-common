@@ -74,8 +74,9 @@ WSGI_APPLICATION = 'apply_for_a_licence.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django_mongodb_backend',
+        'NAME': 'licensify',
+        'HOST': 'mongodb://localhost:27017',
     },
 }
 
