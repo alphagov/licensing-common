@@ -25,6 +25,8 @@ Activate the virtual environment by running ```source .venv/bin/activate``` from
 
 # Testing
 
+Ensure local database instance is running with port 27017 exposed.
+
 With an activated virtual environment run ```make test``` to run pytest test suite. 
 
 # Licence
