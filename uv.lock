@@ -18,7 +18,6 @@ requires-dist = [
     { name = "django-mongodb-backend", specifier = ">=5.2.3" },
     { name = "pytest-django", specifier = ">=4.12.0" },
 ]
-requires-dist = [{ name = "django", specifier = "==5.2.0" }]
 
 [[package]]
 name = "asgiref"
