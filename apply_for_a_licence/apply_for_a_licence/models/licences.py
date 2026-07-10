@@ -6,13 +6,6 @@ from apply_for_a_licence.models.utils import validate_countries
 
 
 class AdministrativeArea(EmbeddedModel):
-
-    def validate_name(self, name: str):
-        expected_name = ','.join(set(self.countries))
-
-        if name != expected_name:
-            raise ValidationError("Invalid name")
-
     code = models.CharField()
     countries = ArrayField(models.CharField(), validators=[validate_countries])
     name = models.CharField(max_length=255)
@@ -22,6 +15,32 @@ class AdministrativeArea(EmbeddedModel):
         name_is_valid = self.name == expected_name
         if not name_is_valid:
             raise ValidationError("Invalid name")
+
+
+class PaymentAmount(EmbeddedModel):
+    pence = models.IntegerField()
+
+
+class LicenceForm(EmbeddedModel):
+    name = models.CharField(max_length=255, default="defaultName")
+    sub_form = models.IntegerField(db_column="subForm")
+    form_ref_number = models.CharField(max_length=255, db_column="formRefNo")
+    file_name = models.CharField(max_length=255, default="licenceForm.pdf", db_column="fileName")
+    file_size = models.IntegerField(db_column="fileSizeInBytes")
+    form_version = models.IntegerField(db_column="formVersion")
+
+
+class SupportingDocumentDefinition():
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
+    is_mandatory = models.BooleanField(db_column="isMandatory")
+
+
+
+
+
+
+
 
 
 
