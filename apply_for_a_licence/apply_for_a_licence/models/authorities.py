@@ -5,18 +5,13 @@ from django_mongodb_backend.fields import ObjectIdField, ArrayField, EmbeddedMod
 from django_mongodb_backend.models import EmbeddedModel
 
 from apply_for_a_licence.enums.snac_codes import SnacCodes
-from apply_for_a_licence.enums.countries import Countries
+from apply_for_a_licence.models.utils import validate_countries
+
 
 
 def validate_snac_codes(snac_codes: list):
     if not set(snac_codes).issubset(set(SnacCodes.list())):
         raise ValidationError("Snac codes not valid")
-
-
-def validate_countries(countries: list):
-    for country in countries:
-        if country not in Countries:
-            raise ValidationError("Country is not valid")
 
 
 class LicenceDetails(EmbeddedModel):

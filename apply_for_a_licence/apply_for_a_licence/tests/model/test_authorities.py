@@ -26,7 +26,7 @@ def test_invalid_snac_code_throws_error():
 
 
 def test_invalid_country_throws_error():
-    expected_error_message = "Country is not valid"
+    expected_error_message = "Invalid country"
 
     with pytest.raises(ValidationError) as e:
         authority=Authority(

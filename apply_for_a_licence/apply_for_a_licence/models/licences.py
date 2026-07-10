@@ -2,15 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_mongodb_backend.fields import ArrayField
 from django_mongodb_backend.models import EmbeddedModel
-
-from apply_for_a_licence.enums.countries import Countries
-
-def validate_countries(countries: list):
-    for country in countries:
-        if country not in Countries:
-            raise ValidationError("Invalid country")
-
-
+from apply_for_a_licence.models.utils import validate_countries
 
 
 class AdministrativeArea(EmbeddedModel):
