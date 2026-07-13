@@ -6,10 +6,11 @@ from django_mongodb_backend.models import EmbeddedModel
 from common.models.utils import validate_countries
 from common.enums.tacit_consent import TacitConsent
 from common.enums.interaction_id_codes import InteractionIdCodes
+from models.utils import validate_country_code
 
 
 class AdministrativeArea(EmbeddedModel):
-    code = models.CharField()
+    code = models.CharField(max_length=1, validators=[validate_country_code])
     countries = ArrayField(models.CharField(), validators=[validate_countries])
     name = models.CharField(max_length=255)
 

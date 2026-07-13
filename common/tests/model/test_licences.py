@@ -43,3 +43,16 @@ def test_admin_area_name_invalid_throws_error():
         admin_area.full_clean()
 
     assert e.value.messages == [expected_error_message]
+
+
+def test_admin_area_code_invalid_throws_error():
+    expected_error_message = "Invalid country code"
+    with pytest.raises(ValidationError) as e:
+        admin_area = AdministrativeArea(
+            code="9",
+            countries=[Countries.NORTHERN_IRELAND.value],
+            name="NI"
+        )
+        admin_area.full_clean()
+
+    assert e.value.messages == [expected_error_message]

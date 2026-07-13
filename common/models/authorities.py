@@ -8,7 +8,6 @@ from common.enums.snac_codes import SnacCodes
 from common.models.utils import validate_countries
 
 
-
 def validate_snac_codes(snac_codes: list):
     if not set(snac_codes).issubset(set(SnacCodes.list())):
         raise ValidationError("Snac codes not valid")

@@ -7,9 +7,9 @@ class InteractionIdCodes(IntEnum):
     PAY_FOR = 4
     INFORMATION = 8
     REGULATION = 9
-    CHARGE = 11
+    CHANGE = 11
     RENEW = 14
     APPLY_FOR_EXEMPTION = 30
     TELL_US_ONCE = 31
-    NOTIFY_OF_INCIDENT = 32
+    NOTIFY_OF_INCIDENT_OR_INSTANCES = 32
     UNKNOWN = 999
