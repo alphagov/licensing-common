@@ -3,10 +3,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_mongodb_backend.fields import ArrayField, EmbeddedModelField, EmbeddedModelArrayField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
-from common.models.utils import validate_countries, validate_country_code, validate_consent
+from common.models.utils import validate_countries, validate_country_code, validate_consent, validate_interaction_id
 from common.enums.tacit_consent import TacitConsent
 from common.enums.interaction_id_codes import InteractionIdCodes
-
 
 
 class AdministrativeArea(EmbeddedModel):
@@ -36,14 +35,14 @@ class LicenceForm(EmbeddedModel):
 
 class SupportingDocumentDefinition(EmbeddedModel):
     name = models.CharField(max_length=255, blank=True, default="")
-    description = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
     is_mandatory = models.BooleanField(db_column="isMandatory", default=False, blank=True)
 
 
 class LicenceInteraction(EmbeddedModel):
-    interaction_id = models.IntegerField(db_column="lgilId", default=InteractionIdCodes.APPLY.value)
+    interaction_id = models.IntegerField(db_column="lgilId", default=InteractionIdCodes.APPLY.value, validators=[validate_interaction_id])
     interaction_sub_id = models.IntegerField(db_column="lgilSubId", default=0)
-    licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName") #generated field from interaction id?
+    licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
     display_title = models.CharField(max_length=255, db_column="displayTitle", blank=True, default="")
     form = EmbeddedModelField(LicenceForm, blank=True)
     sub_forms = EmbeddedModelArrayField(LicenceForm, db_column="subForms", blank=True, default=[])

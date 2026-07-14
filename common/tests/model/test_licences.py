@@ -67,7 +67,19 @@ def test_licence_interaction_invalid_consent_throws_error():
         )
 
         interaction.full_clean()
-        
+
     assert e.value.messages == [expected_error_message]
 
+
+def test_licence_interaction_invalid_interaction_id_throws_error():
+    expected_error_message = "Invalid interaction id"
+    with pytest.raises(ValidationError) as e:
+        interaction = LicenceInteraction(
+            licence_interaction_name="test",
+            interaction_id=1
+        )
+
+        interaction.full_clean()
+
+    assert e.value.messages == [expected_error_message]
 

@@ -2,6 +2,7 @@ from common.enums.countries import Countries, CountryCodes
 from django.core.exceptions import ValidationError
 
 from common.enums.tacit_consent import TacitConsent
+from common.enums.interaction_id_codes import InteractionIdCodes
 
 
 def validate_countries(countries: list):
@@ -18,3 +19,7 @@ def validate_country_code(country_code: str):
 def validate_consent(consent: str):
     if consent not in TacitConsent:
         raise ValidationError("Invalid consent")
+
+def validate_interaction_id(interaction_id: int):
+    if interaction_id not in InteractionIdCodes:
+        raise ValidationError("Invalid interaction id")
