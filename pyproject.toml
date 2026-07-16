@@ -16,3 +16,17 @@ DJANGO_SETTINGS_MODULE = "apply_for_a_licence.settings"
 dev = [
     "ruff>=0.15.22",
 ]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = [
+    "DJ",
+    "E",
+    "F",
+    "W",
+    "I",
+    "UP",
+    "B",
+]

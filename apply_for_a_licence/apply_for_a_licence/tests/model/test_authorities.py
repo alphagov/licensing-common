@@ -1,11 +1,10 @@
 import pytest
-from django.core.exceptions import ValidationError
-
 from apply_for_a_licence.models.authorities import (
     Authority,
     ContactDetails,
     LicenceDetails,
 )
+from django.core.exceptions import ValidationError
 
 
 def test_invalid_snac_code_throws_error():
@@ -68,11 +67,7 @@ def test_snac_codes_can_be_empty():
         snac_codes=[],
         countries=["England", "NI", "Scotland", "Wales"],
         encoded_image="",
-        licence_details=[
-            LicenceDetails(
-                licence_code="Test", offered_by_authority=False, using_gov_uk=False
-            )
-        ],
+        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
         contact_details=ContactDetails(),
     )
     authority.full_clean()
@@ -88,11 +83,7 @@ def test_valid_authority():
         snac_codes=["00AA"],
         countries=["England", "NI", "Scotland", "Wales"],
         encoded_image="",
-        licence_details=[
-            LicenceDetails(
-                licence_code="Test", offered_by_authority=False, using_gov_uk=False
-            )
-        ],
+        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
         contact_details=ContactDetails(),
     )
     authority.full_clean()
