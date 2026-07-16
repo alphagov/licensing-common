@@ -7,8 +7,12 @@ dependencies = [
     "django-mongodb-backend>=5.2.3",
     "pymongo>=4.17.0",
     "pytest-django>=4.12.0",
-    "ruff>=0.15.21",
 ]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "apply_for_a_licence.settings"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.22",
+]
