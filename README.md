@@ -30,6 +30,7 @@ This project also uses `pre-commit` run `pre-commit install` to create the corre
 # Testing
 
 With an activated virtual environment run ```make test``` to run pytest test suite. 
+This will create a local instance of DocumentDB, run the tests, and tear down the instance of DocumentDB
 
 # Licence
 

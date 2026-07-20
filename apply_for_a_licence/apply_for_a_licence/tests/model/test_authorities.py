@@ -4,6 +4,7 @@ from apply_for_a_licence.models.authorities import (
     ContactDetails,
     LicenceDetails,
 )
+from bson import ObjectId
 from django.core.exceptions import ValidationError
 
 
@@ -87,3 +88,30 @@ def test_valid_authority():
         contact_details=ContactDetails(),
     )
     authority.full_clean()
+
+
+def test_write_to_db():
+    mock_id = "64c13ab08edf48a008793cac"
+    authority = Authority(
+        _id=ObjectId(mock_id),
+        url_slug="test",
+        name="test",
+        full_name="test",
+        agency_id=1,
+        authority_url="",
+        snac_codes=["00AA"],
+        countries=["England", "NI", "Scotland", "Wales"],
+        encoded_image="",
+        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
+        contact_details=ContactDetails(),
+    )
+    authority.full_clean()
+    authority.save()
+
+    from_db = Authority.objects.get(_id=mock_id)
+    assert from_db._id == ObjectId(mock_id)
+    assert from_db.url_slug == "test"
+    assert from_db.name == "test"
+    assert from_db.full_name == "test"
+    assert from_db.agency_id == 1
+    assert from_db.authority_url == ""
