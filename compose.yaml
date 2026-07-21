@@ -1,0 +1,10 @@
+name: licensing
+
+services:
+  document_db:
+    image: ghcr.io/documentdb/documentdb/documentdb-local:${DOCUMENTDB_TAG:-latest}
+    environment:
+      - USERNAME=${DOCUMENTDB_USER:-docdb}
+      - PASSWORD=${DOCUMENTDB_PASSWORD:-password}
+    ports:
+      - ${DOCUMENTDB_PORT:-10260}:10260

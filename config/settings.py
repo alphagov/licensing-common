@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -72,11 +73,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DOCUMENTDB_USER = os.getenv("DOCUMENTDB_USER", "docdb")
+DOCUMENTDB_PASSWORD = os.getenv("DOCUMENTDB_PASSWORD", "password")
+DOCUMENTDB_PORT = os.getenv("DOCUMENTDB_PORT", "10260")
+DOCUMENTDB_HOST = os.getenv("DOCUMENTDB_HOST", "localhost")
+DOCUMENTDB_CONN_ARGS = (
+    "tls=true&tlsAllowInvalidCertificates=true" if os.getenv("DOCUMENTDB_ALLOW_INVALID_CERTS") else "tls=true"
+)
+
 DATABASES = {
     "default": {
         "ENGINE": "django_mongodb_backend",
         "NAME": "licensify",
-        "HOST": "mongodb://localhost:27017",
+        "HOST": f"mongodb://{DOCUMENTDB_USER}:{DOCUMENTDB_PASSWORD}@{DOCUMENTDB_HOST}:{DOCUMENTDB_PORT}?{DOCUMENTDB_CONN_ARGS}",
     },
 }
 
