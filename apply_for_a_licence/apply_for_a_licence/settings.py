@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,11 +73,17 @@ WSGI_APPLICATION = "apply_for_a_licence.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DOCUMENTDB_USER = os.getenv("DOCUMENTDB_USER", "docdb")
+DOCUMENTDB_PASSWORD = os.getenv("DOCUMENTDB_PASSWORD", "password")
+DOCUMENTDB_PORT = os.getenv("DOCUMENTDB_PORT", "10260")
+DOCUMENTDB_HOST = os.getenv("DOCUMENTDB_HOST", "localhost")
+DOCUMENTDB_CONN_ARGS = "tls=true&tlsAllowInvalidCertificates=true" if os.getenv("DOCUMENTDB_ALLOW_INVALID_CERTS") else "tls=true"
+
 DATABASES = {
     "default": {
         "ENGINE": "django_mongodb_backend",
         "NAME": "licensify",
-        "HOST": "mongodb://demo:test@localhost:10260?tls=true&tlsAllowInvalidCertificates=true",
+        "HOST": f"mongodb://{DOCUMENTDB_USER}:{DOCUMENTDB_PASSWORD}@{DOCUMENTDB_HOST}:{DOCUMENTDB_PORT}?{DOCUMENTDB_CONN_ARGS}",
     },
 }
 

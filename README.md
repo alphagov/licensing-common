@@ -10,6 +10,12 @@ Licensing Common holds models, and logic shared across different components of t
 
 # Setup
 
+## Mise
+
+This project uses [mise-en-place](https://mise.jdx.dev/) to provide specific versions of tools, listed in .tool-versions. You should set up mise to [activate automatically](https://mise.jdx.dev/getting-started.html#activate-mise)
+
+## UV
+
 This project uses UV to manage packages and dependencies. 
 
 To install UV if not already present, run the following command:
@@ -24,8 +30,15 @@ Use `uv sync` to create a virtual environment with all necessary dependencies an
 
 Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `uv` hasn't already done this for you
 
-This project also uses `pre-commit` run `pre-commit install` to create the correct pre-commit git hooks.
+## Direnv
 
+Get direnv to load required environment variables automatically by setting up the [direnv hook](https://direnv.net/docs/hook.html) to run when your shell starts up.
+
+You will also need to allow direnv to load environment variables from this directory with `direnv allow .`
+
+## Pre-commit
+
+This project also uses `pre-commit` run `pre-commit install` to create the correct pre-commit git hooks.
 
 # Testing
 
