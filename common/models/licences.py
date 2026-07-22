@@ -68,7 +68,7 @@ class LicenceInteraction(EmbeddedModel):
 
 class Licence(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, auto_created=True, editable=False, primary_key=True)
-    licence_code = models.CharField(db_column="licenceCode", max_length=255)
+    licence_code = models.CharField(db_column="licenceCode", max_length=255, unique=True)
     name = models.CharField(max_length=255, default="")
     legislation_name = ArrayField(models.CharField(max_length=255), db_column="legislationName")
     url_slug = models.SlugField(max_length=255, db_column="urlSlug")
