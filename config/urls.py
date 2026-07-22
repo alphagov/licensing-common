@@ -1,5 +1,5 @@
 """
-URL configuration for apply_for_a_licence project.
+URL configuration for common project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/

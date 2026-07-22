@@ -1,27 +1,16 @@
 import bson
 from django.core.exceptions import ValidationError
 from django.db import models
-from django_mongodb_backend.fields import (
-    ArrayField,
-    EmbeddedModelArrayField,
-    EmbeddedModelField,
-    ObjectIdField,
-)
+from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
-from apply_for_a_licence.enums.countries import Countries
-from apply_for_a_licence.enums.snac_codes import SnacCodes
+from common.enums.snac_codes import SnacCodes
+from common.models.utils import validate_countries
 
 
 def validate_snac_codes(snac_codes: list):
     if not set(snac_codes).issubset(set(SnacCodes.list())):
         raise ValidationError("Snac codes not valid")
-
-
-def validate_countries(countries: list):
-    for country in countries:
-        if country not in Countries:
-            raise ValidationError("Country is not valid")
 
 
 class LicenceDetails(EmbeddedModel):
@@ -56,17 +45,12 @@ class Authority(models.Model):
         blank=True,
     )
     countries = ArrayField(
-        models.CharField(max_length=255),
-        db_column="countries",
-        default=[],
-        validators=[validate_countries],
+        models.CharField(max_length=255), db_column="countries", default=[], validators=[validate_countries]
     )
     encoded_image = models.TextField(db_column="imageBase64encoded", blank=True, default="")
     licence_details = EmbeddedModelArrayField(LicenceDetails, default=[], db_column="licenceDetails")
     contact_details = EmbeddedModelField(
-        ContactDetails,
-        db_column="authorityContactDetailsHolder",
-        default=ContactDetails(),
+        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails()
     )
 
     class Meta:

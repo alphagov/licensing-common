@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "apply_for_a_licence.settings"
+DJANGO_SETTINGS_MODULE = "config.settings"
 
 [dependency-groups]
 dev = [
