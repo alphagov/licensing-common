@@ -1,6 +1,6 @@
 import bson
 from django.db import models
-from django_mongodb_backend.fields import EmbeddedModelField, ObjectIdField
+from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.models.licences import SupportingDocumentDefinition
@@ -38,3 +38,28 @@ class ApplicationStatus(EmbeddedModel):
     download_date = models.DateTimeField(db_column="downloadDate", blank=True)
     visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
 # clarify difference between collected and downloaded
+
+class LicensingApplication(models.Model):
+    _id = ObjectIdField(db_column="_id", primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)
+    applicant_email = models.EmailField(db_column="applicantEmail", default="", max_length=255, blank=True)
+    authority = models.CharField(db_column="authority", max_length=255, default="", blank=True)
+    licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)
+    supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
+    application_document = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
+    service = EmbeddedModelField(Service, db_column="service")
+    application_date = models.DateTimeField(db_column="applicationDate", blank=True)
+# default is now, does this need datetime dependency?
+    supporting_documents = EmbeddedModelArrayField(
+        SupportingDocument, db_column="applicationDocuments", default=[], blank=True
+    )
+    status = EmbeddedModelField(ApplicationStatus, db_column="status")
+    application_data = models.CharField(db_column="applicationData", max_length=255, default="", blank=True)
+# check if max_length for XML/JSON data should exceed 255
+    application_reference = models.CharField(db_column="applicationRefNo", max_length=255, default="", blank=True)
+
+    class Meta:
+        db_table = "applications"
+        managed = False
+
+    def __str__(self):
+        return f"{self._id}"
