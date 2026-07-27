@@ -14,9 +14,9 @@ class SupportingDocument(EmbeddedModel):
 # stream = runtime only field
 
 class SupportingDocumentDefinition(EmbeddedModel):
-    name = models.CharField(db_column="name", max_length=255)
+    name = models.CharField(db_column="name", max_length=255, blank=True)
     description = models.CharField(db_column="description", max_length=255, default="", blank=True)
-    required = models.BooleanField(db_column="isMandatory", default=False)
+    required = models.BooleanField(db_column="isMandatory", default=False, blank=True)
 
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
@@ -24,3 +24,17 @@ class Service(EmbeddedModel):
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
 # consider renaming this model to something more relevant or 'purging' as noted in scala code
 
+class ApplicationStatus(EmbeddedModel):
+    data_available = models.BooleanField(db_column="isDataAvailable", default=False)
+    is_being_processed = models.BooleanField(db_column="isBeingProcessed", default=False)
+    processed = models.BooleanField(db_column="successfullyProcessed", default=False)
+    collected_by_authority = models.BooleanField(db_column="isCollectedByAuthority", default=False)
+    collection_date = models.DateTimeField(db_column="collectionDate", blank=True)
+    is_expired = models.BooleanField(db_column="isExpired", default=False)
+    expiry_date = models.DateTimeField(db_column="expiryDate", blank=True)
+    process_attempt_count = models.IntegerField(db_column="processAttemptCount", blank=True)
+    process_start_date = models.DateTimeField(db_column="processStartDate", blank=True)
+    is_downloaded = models.BooleanField(db_column="isDownloaded", default=False)
+    download_date = models.DateTimeField(db_column="downloadDate", blank=True)
+    visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
+# clarify difference between collected and downloaded
