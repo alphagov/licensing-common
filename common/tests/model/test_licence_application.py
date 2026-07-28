@@ -16,3 +16,26 @@ def test_is_virus_detected_in_file():
 
      infected_document = SupportingDocument(virus_check_status=VirusCheckStatus.FOUND_VIRUS.value)
      assert infected_document.is_virus_detected_in_file is True
+
+def test_valid_licence_application():
+    licence_application = LicenceApplication(
+        applicant_email="test",
+        authority="test",
+        licence="test",
+        supporting_documents_online=True,
+        application_document=SupportingDocument(),
+        service=Service(),
+        application_date=now(),
+        application_reference="test",
+        authority_application_reference="test",
+        expected_processing_date=now() + timedelta(days=7),
+        tacit_consent=False,
+        required_payment_amount=PaymentAmount(),
+        fee_required=False,
+        variable_fee=False,
+        payment_reference_id="test",
+        application_main_form="test",
+        collected_by="test",
+        under_process_by="test"
+    )
+    licence_application.full_clean()
