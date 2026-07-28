@@ -6,6 +6,7 @@ from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.tacit_consent import TacitConsent
+from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 from common.models.utils import validate_consent, validate_countries, validate_country_code, validate_interaction_id
 
 
@@ -20,11 +21,6 @@ class AdministrativeArea(EmbeddedModel):
         if not name_is_valid:
             raise ValidationError("Invalid name")
 
-
-class PaymentAmount(EmbeddedModel):
-    pence = models.IntegerField(default=0)
-
-
 class LicenceForm(EmbeddedModel):
     name = models.CharField(max_length=255, default="defaultName")
     sub_form = models.IntegerField(db_column="subForm", default=0)
@@ -32,13 +28,6 @@ class LicenceForm(EmbeddedModel):
     file_name = models.CharField(max_length=255, default="licenceForm.pdf", db_column="fileName")
     file_size = models.IntegerField(db_column="fileSizeInBytes", default=0)
     form_version = models.IntegerField(db_column="formVersion", default=1)
-
-
-class SupportingDocumentDefinition(EmbeddedModel):
-    name = models.CharField(max_length=255, blank=True, default="")
-    description = models.TextField(blank=True)
-    is_mandatory = models.BooleanField(db_column="isMandatory", default=False, blank=True)
-
 
 class LicenceInteraction(EmbeddedModel):
     interaction_id = models.IntegerField(
