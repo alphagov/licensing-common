@@ -1,11 +1,24 @@
-test: prepare
-	pytest
-
-format:
-	uv run ruff check --fix && uv run ruff format
+.PHONY: test prepare stop format seed-db
 
 prepare:
+	uv sync
+
+# ==============================================================================
+# TESTING
+# =======================================================================
+test: prepare-tests
+	pytest
+
+prepare-tests: prepare
 	docker compose up -d
 
 stop:
 	docker compose down
+
+# ==============================================================================
+# LINTING/FORMATTING
+# =======================================================================
+format: prepare
+	uv run ruff check --fix && uv run ruff format
+
+
