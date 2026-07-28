@@ -80,13 +80,12 @@ DOCUMENTDB_HOST = os.getenv("DOCUMENTDB_HOST", "localhost")
 DOCUMENTDB_CONN_ARGS = (
     "tls=true&tlsAllowInvalidCertificates=true" if os.getenv("DOCUMENTDB_ALLOW_INVALID_CERTS") else "tls=true"
 )
+DOCUMENT_DB_CONN = (
+    f"mongodb://{DOCUMENTDB_USER}:{DOCUMENTDB_PASSWORD}@{DOCUMENTDB_HOST}:{DOCUMENTDB_PORT}?{DOCUMENTDB_CONN_ARGS}"
+)
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django_mongodb_backend",
-        "NAME": "licensify",
-        "HOST": f"mongodb://{DOCUMENTDB_USER}:{DOCUMENTDB_PASSWORD}@{DOCUMENTDB_HOST}:{DOCUMENTDB_PORT}?{DOCUMENTDB_CONN_ARGS}",
-    },
+    "default": {"ENGINE": "django_mongodb_backend", "NAME": "licensify", "HOST": f"{DOCUMENT_DB_CONN}"},
 }
 
 
