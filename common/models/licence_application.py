@@ -8,6 +8,8 @@ from common.models.shared_models import PaymentAmount, SupportingDocumentDefinit
 
 class SupportingDocument(EmbeddedModel):
     filename = models.CharField(db_column="filename", max_length=255, blank=True)
+    stream = models.BinaryField(null=True, blank=True)
+# stream = runtime only field, will this work?
     definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
     _id = ObjectIdField(db_column="_id")
     virus_check_status = models.CharField(db_column="virusCheckStatus", max_length=255)#"Clean" or "FoundVirus"
