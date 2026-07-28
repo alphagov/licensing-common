@@ -222,3 +222,6 @@ __marimo__/
 
 #MacOS
 .DS_Store
+
+# No accidental BSON dumps
+.bson

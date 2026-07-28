@@ -47,3 +47,7 @@ extend-select = [
     "N804",
     "RUF100",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore print statements (T201) in any files under a scripts directory
+"scripts/*" = ["T201"]
