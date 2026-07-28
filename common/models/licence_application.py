@@ -3,7 +3,7 @@ from django.db import models
 from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
-from common.models.licences import SupportingDocumentDefinition
+from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
 class SupportingDocument(EmbeddedModel):
@@ -12,11 +12,6 @@ class SupportingDocument(EmbeddedModel):
     _id = ObjectIdField(db_column="_id")
     virus_check_status = models.CharField(db_column="virusCheckStatus", max_length=255)#"Clean" or "FoundVirus"
 # stream = runtime only field
-
-class SupportingDocumentDefinition(EmbeddedModel):
-    name = models.CharField(db_column="name", max_length=255, blank=True)
-    description = models.CharField(db_column="description", max_length=255, default="", blank=True)
-    required = models.BooleanField(db_column="isMandatory", default=False, blank=True)
 
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
@@ -56,6 +51,16 @@ class LicensingApplication(models.Model):
     application_data = models.CharField(db_column="applicationData", max_length=255, default="", blank=True)
 # check if max_length for XML/JSON data should exceed 255
     application_reference = models.CharField(db_column="applicationRefNo", max_length=255, default="", blank=True)
+    authority_application_reference = models.CharField(db_column="authorityAppReference", max_length=255, blank=True)
+    expected_processing_date = models.DateTimeField(db_column="expectedProcessingDate", blank=True)
+    tacit_consent = models.BooleanField(db_column="tacitConsent", default=False)
+    required_payment_amount = EmbeddedModelField(PaymentAmount, db_column="requiredPaymentAmount")
+    fee_required = models.BooleanField(db_column="isFeeRequired", default=False)
+    variable_fee = models.BooleanField(db_column="isVariableFee", default=False)
+    payment_reference_id = models.CharField(db_column="paymentReferenceId", max_length=255, blank=True)
+    application_main_form = models.JSONField(db_column="applicationMainForm", default=dict, blank=True)
+    collected_by = models.EmailField(db_column="collectedBy", max_length=255, blank=True)
+    under_process_by = models.EmailField(db_column="underProcessBy", max_length=255, blank=True)
 
     class Meta:
         db_table = "applications"
