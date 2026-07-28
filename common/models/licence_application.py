@@ -41,7 +41,7 @@ class ApplicationStatus(EmbeddedModel):
     download_date = models.DateTimeField(db_column="downloadDate", blank=True)
     visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
 
-class LicensingApplication(models.Model):
+class LicenceApplication(models.Model):
     _id = ObjectIdField(db_column="_id", primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)
     applicant_email = models.EmailField(db_column="applicantEmail", default="", max_length=255, blank=True)
     authority = models.CharField(db_column="authority", max_length=255, default="", blank=True)
