@@ -3,6 +3,7 @@ from django.db import models
 from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
+from common.enums.virus_check_status import VirusCheckStatus
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
@@ -12,8 +13,11 @@ class SupportingDocument(EmbeddedModel):
 # stream = runtime only field, will this work?
     definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
     _id = ObjectIdField(db_column="_id")
-    virus_check_status = models.CharField(db_column="virusCheckStatus", max_length=255)#"Clean" or "FoundVirus"
-# stream = runtime only field
+    virus_check_status = models.CharField(db_column="virusCheckStatus", max_length=255, default=VirusCheckStatus.CLEAN)
+    @property
+    def is_virus_detected_in_file(self)->bool:
+        return self.virus_check_status == VirusCheckStatus.FOUND_VIRUS
+# add this check here? use enums for "Clean" or "FoundVirus"?
 
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
