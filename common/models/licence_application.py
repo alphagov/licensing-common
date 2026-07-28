@@ -1,5 +1,6 @@
 import bson
 from django.db import models
+from django.utils.timezone import now
 from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
@@ -13,17 +14,18 @@ class SupportingDocument(EmbeddedModel):
 # stream = runtime only field, will this work?
     definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
     _id = ObjectIdField(db_column="_id")
-    virus_check_status = models.CharField(db_column="virusCheckStatus", max_length=255, default=VirusCheckStatus.CLEAN)
+    virus_check_status = models.CharField(
+        db_column="virusCheckStatus", max_length=255, default=VirusCheckStatus.CLEAN.value
+    )
     @property
     def is_virus_detected_in_file(self)->bool:
-        return self.virus_check_status == VirusCheckStatus.FOUND_VIRUS
-# add this check here? use enums for "Clean" or "FoundVirus"?
+        return self.virus_check_status == VirusCheckStatus.FOUND_VIRUS.value
 
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
     interaction_id = models.IntegerField(db_column="lgilId")
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
-# consider renaming this model to something more relevant or 'purging' as noted in scala code
+# consider 'purging' this lesser used model as noted in Scala code
 
 class ApplicationStatus(EmbeddedModel):
     data_available = models.BooleanField(db_column="isDataAvailable", default=False)
@@ -38,7 +40,6 @@ class ApplicationStatus(EmbeddedModel):
     is_downloaded = models.BooleanField(db_column="isDownloaded", default=False)
     download_date = models.DateTimeField(db_column="downloadDate", blank=True)
     visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
-# clarify difference between collected and downloaded
 
 class LicensingApplication(models.Model):
     _id = ObjectIdField(db_column="_id", primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)
@@ -48,14 +49,12 @@ class LicensingApplication(models.Model):
     supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
     application_document = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
     service = EmbeddedModelField(Service, db_column="service")
-    application_date = models.DateTimeField(db_column="applicationDate", blank=True)
-# default is now, does this need datetime dependency?
+    application_date = models.DateTimeField(db_column="applicationDate", blank=True, default=now)
     supporting_documents = EmbeddedModelArrayField(
         SupportingDocument, db_column="applicationDocuments", default=[], blank=True
     )
     status = EmbeddedModelField(ApplicationStatus, db_column="status")
-    application_data = models.CharField(db_column="applicationData", max_length=255, default="", blank=True)
-# check if max_length for XML/JSON data should exceed 255
+    application_data = models.TextField(db_column="applicationData", default="", blank=True)
     application_reference = models.CharField(db_column="applicationRefNo", max_length=255, default="", blank=True)
     authority_application_reference = models.CharField(db_column="authorityAppReference", max_length=255, blank=True)
     expected_processing_date = models.DateTimeField(db_column="expectedProcessingDate", blank=True)
