@@ -7,6 +7,12 @@ from pymongo.database import Database
 
 from config import settings
 
+if not settings.DEBUG:
+    sys.exit("Aborting, not a debug environment.")
+
+if "localhost" not in settings.DOCUMENT_DB_CONN:
+    sys.exit("Aborting, not localhost.")
+
 client = MongoClient(settings.DOCUMENT_DB_CONN)
 
 
