@@ -44,8 +44,12 @@ This project also uses `pre-commit` run `pre-commit install` to create the corre
 
 Ensure local database instance is running with port 27017 exposed.
 
-With an activated virtual environment run ```make test``` to run pytest test suite. 
-This will create a local instance of DocumentDB, run the tests, and tear down the instance of DocumentDB
+With an activated virtual environment run `make test` to run pytest test suite. This will create a local instance of DocumentDB, run the tests, and tear down the instance of DocumentDB
+
+# Data Seeding
+>  **Note:** This command requires local BSON files and is restricted to local development environments.
+
+The `make seed-db` command will attempt to seed data within the local DocumentDB instance. It will connect using the `DOCUMENT_DB_CONN` within the main Django `settings.py` file. During the process it will check for existing collections and will ask you to specify the folder containing the BSON. It will convert all BSON files to collections where the collection does not already exist.
 
 # Licence
 
