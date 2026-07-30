@@ -26,5 +26,5 @@ format: prepare
 # DATA/SEEDING
 # =======================================================================
 
-seed-db: prepare
+seed-db: prepare-tests
 	uv run python -m scripts.data.seed_db

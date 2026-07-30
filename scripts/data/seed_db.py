@@ -29,6 +29,7 @@ def seed_collection(db_to_seed: Database, data_file: Path):
         # inefficient use of memory but assuming the data is no more than
         # a couple of hundred mb at worst, and it's a one time thing
         documents = list(bson.decode_file_iter(bson_file))
+
     if len(documents) > 0:
         db_to_seed[data_file.stem].insert_many(documents)
         print(f"Seeded {len(documents)} documents into '{data_file.stem}'...")
