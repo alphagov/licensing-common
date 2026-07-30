@@ -32,13 +32,13 @@ class ApplicationStatus(EmbeddedModel):
     is_being_processed = models.BooleanField(db_column="isBeingProcessed", default=False)
     processed = models.BooleanField(db_column="successfullyProcessed", default=False)
     collected_by_authority = models.BooleanField(db_column="isCollectedByAuthority", default=False)
-    collection_date = models.DateTimeField(db_column="collectionDate", blank=True)
+    collection_date = models.DateTimeField(db_column="collectionDate", blank=True, null=True)
     is_expired = models.BooleanField(db_column="isExpired", default=False)
-    expiry_date = models.DateTimeField(db_column="expiryDate", blank=True)
-    process_attempt_count = models.IntegerField(db_column="processAttemptCount", blank=True)
-    process_start_date = models.DateTimeField(db_column="processStartDate", blank=True)
+    expiry_date = models.DateTimeField(db_column="expiryDate", blank=True, null=True)
+    process_attempt_count = models.IntegerField(db_column="processAttemptCount", blank=True, null=True)
+    process_start_date = models.DateTimeField(db_column="processStartDate", blank=True, null=True)
     is_downloaded = models.BooleanField(db_column="isDownloaded", default=False)
-    download_date = models.DateTimeField(db_column="downloadDate", blank=True)
+    download_date = models.DateTimeField(db_column="downloadDate", blank=True, null=True)
     visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
 
 class LicenceApplication(models.Model):
