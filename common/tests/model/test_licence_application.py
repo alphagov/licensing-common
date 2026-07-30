@@ -9,14 +9,6 @@ from common.models.licence_application import ApplicationStatus, LicenceApplicat
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
-def test_is_virus_detected_in_file():
-    clean_document = SupportingDocument(virus_check_status=VirusCheckStatus.CLEAN.value)
-    assert clean_document.is_virus_detected_in_file is False
-
-    infected_document = SupportingDocument(virus_check_status=VirusCheckStatus.FOUND_VIRUS.value)
-    assert infected_document.is_virus_detected_in_file is True
-
-
 def test_valid_licence_application():
     licence_application = LicenceApplication(
         applicant_email="test@test.com",
@@ -44,7 +36,7 @@ def test_valid_licence_application():
     licence_application.full_clean()
 
 
-def test_licence_interaction_invalid_interaction_id_throws_error():
+def test_invalid_interaction_id_in_licence_application_service_throws_error():
     expected_error_message = "Invalid interaction id"
     with pytest.raises(ValidationError) as e:
         service = Service(licence_code="test", interaction_id=1, interaction_sub_id=1)
@@ -52,3 +44,11 @@ def test_licence_interaction_invalid_interaction_id_throws_error():
         service.full_clean()
 
     assert e.value.messages == [expected_error_message]
+
+
+def test_is_virus_detected_in_file():
+    clean_document = SupportingDocument(virus_check_status=VirusCheckStatus.CLEAN.value)
+    assert clean_document.is_virus_detected_in_file is False
+
+    infected_document = SupportingDocument(virus_check_status=VirusCheckStatus.FOUND_VIRUS.value)
+    assert infected_document.is_virus_detected_in_file is True
