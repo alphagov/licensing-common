@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 
 from common.enums.countries import Countries, CountryCodes
 from common.enums.interaction_id_codes import InteractionIdCodes
+from common.enums.snac_codes import SnacCodes
 from common.enums.tacit_consent import TacitConsent
 
 
@@ -24,3 +25,8 @@ def validate_consent(consent: str):
 def validate_interaction_id(interaction_id: int):
     if interaction_id not in InteractionIdCodes:
         raise ValidationError("Invalid interaction id")
+
+
+def validate_snac_codes(snac_codes: list):
+    if not set(snac_codes).issubset(set(SnacCodes.list())):
+        raise ValidationError("Snac codes not valid")

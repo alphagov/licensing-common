@@ -11,21 +11,22 @@ from common.models.shared_models import PaymentAmount, SupportingDocumentDefinit
 class SupportingDocument(EmbeddedModel):
     filename = models.CharField(db_column="filename", max_length=255, blank=True)
     stream = models.BinaryField(null=True, blank=True)
-# stream = runtime only field, will this work?
     definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
     _id = ObjectIdField(db_column="_id")
     virus_check_status = models.CharField(
         db_column="virusCheckStatus", max_length=255, default=VirusCheckStatus.CLEAN.value
     )
+
     @property
-    def is_virus_detected_in_file(self)->bool:
+    def is_virus_detected_in_file(self) -> bool:
         return self.virus_check_status == VirusCheckStatus.FOUND_VIRUS.value
+
 
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
     interaction_id = models.IntegerField(db_column="lgilId")
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
-# consider 'purging' this lesser used model as noted in Scala code
+
 
 class ApplicationStatus(EmbeddedModel):
     data_available = models.BooleanField(db_column="isDataAvailable", default=False)
@@ -40,6 +41,7 @@ class ApplicationStatus(EmbeddedModel):
     is_downloaded = models.BooleanField(db_column="isDownloaded", default=False)
     download_date = models.DateTimeField(db_column="downloadDate", blank=True, null=True)
     visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
+
 
 class LicenceApplication(models.Model):
     _id = ObjectIdField(db_column="_id", primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)

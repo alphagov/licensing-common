@@ -21,6 +21,7 @@ class AdministrativeArea(EmbeddedModel):
         if not name_is_valid:
             raise ValidationError("Invalid name")
 
+
 class LicenceForm(EmbeddedModel):
     name = models.CharField(max_length=255, default="defaultName")
     sub_form = models.IntegerField(db_column="subForm", default=0)
@@ -28,6 +29,7 @@ class LicenceForm(EmbeddedModel):
     file_name = models.CharField(max_length=255, default="licenceForm.pdf", db_column="fileName")
     file_size = models.IntegerField(db_column="fileSizeInBytes", default=0)
     form_version = models.IntegerField(db_column="formVersion", default=1)
+
 
 class LicenceInteraction(EmbeddedModel):
     interaction_id = models.IntegerField(
