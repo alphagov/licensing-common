@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+import pytest
+from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
 from common.enums.virus_check_status import VirusCheckStatus
@@ -40,3 +42,13 @@ def test_valid_licence_application():
         under_process_by="test@test.com",
     )
     licence_application.full_clean()
+
+
+def test_licence_interaction_invalid_interaction_id_throws_error():
+    expected_error_message = "Invalid interaction id"
+    with pytest.raises(ValidationError) as e:
+        service = Service(licence_code="test", interaction_id=1, interaction_sub_id=1)
+
+        service.full_clean()
+
+    assert e.value.messages == [expected_error_message]
