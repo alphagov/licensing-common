@@ -29,3 +29,4 @@ format: prepare
 
 seed-db: prepare-tests
 	uv run python -m scripts.data.seed_db
+
