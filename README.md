@@ -26,7 +26,7 @@ To install UV if not already present, run the following command:
 brew install uv
 ```
 
-Use `uv sync` to create a virtual environment with all necessary dependencies and packages already resolved.
+Use `make sync` to create a virtual environment with all necessary dependencies and packages already resolved. This will also happen automatically when running other make commands.
 
 Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `uv` hasn't already done this for you
 

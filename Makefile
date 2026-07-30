@@ -1,8 +1,9 @@
-.PHONY: test prepare stop format seed-db
+.PHONY: test prepare stop format seed-db sync
 
-prepare:
+prepare: sync
+
+sync:
 	uv sync
-
 # =======================================================================
 # TESTING
 # =======================================================================
