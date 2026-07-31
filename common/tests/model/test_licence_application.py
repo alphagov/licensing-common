@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.virus_check_status import VirusCheckStatus
-from common.models.licence_application import ApplicationStatus, LicenceApplication, Service, SupportingDocument
+from common.models.licence_application import ApplicationStatus, LicenceApplication, SupportingDocument
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
@@ -19,7 +19,9 @@ def test_valid_licence_application():
         application_document=SupportingDocument(
             definition=SupportingDocumentDefinition(), _id="id", virus_check_status=VirusCheckStatus.CLEAN.value
         ),
-        service=Service(licence_code="test", interaction_id=InteractionIdCodes.APPLY.value, interaction_sub_id=1),
+        licence_code="test",
+        interaction_id=InteractionIdCodes.APPLY.value,
+        interaction_sub_id=0,
         status=ApplicationStatus(data_available=False, is_being_processed=False, collected_by_authority=False),
         application_date=now(),
         application_reference="test",
@@ -40,9 +42,32 @@ def test_valid_licence_application():
 def test_invalid_interaction_id_in_licence_application_service_throws_error():
     expected_error_message = "Value 1 is not a valid choice."
     with pytest.raises(ValidationError) as e:
-        service = Service(licence_code="test", interaction_id=1, interaction_sub_id=1)
-
-        service.full_clean()
+        licence_application = LicenceApplication(
+            applicant_email="test@test.com",
+            authority="test",
+            licence="test",
+            supporting_documents_online=True,
+            application_document=SupportingDocument(
+                definition=SupportingDocumentDefinition(), _id="id", virus_check_status=VirusCheckStatus.CLEAN.value
+            ),
+            licence_code="test",
+            interaction_id=1,
+            interaction_sub_id=0,
+            status=ApplicationStatus(data_available=False, is_being_processed=False, collected_by_authority=False),
+            application_date=now(),
+            application_reference="test",
+            authority_application_reference="test",
+            expected_processing_date=now() + timedelta(days=7),
+            tacit_consent=False,
+            required_payment_amount=PaymentAmount(),
+            fee_required=False,
+            variable_fee=False,
+            payment_reference_id="test",
+            application_main_form="test",
+            collected_by="test@test.com",
+            under_process_by="test@test.com",
+        )
+        licence_application.full_clean()
 
     assert e.value.messages == [expected_error_message]
 
