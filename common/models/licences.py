@@ -7,7 +7,7 @@ from django_mongodb_backend.models import EmbeddedModel
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.tacit_consent import TacitConsent
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
-from common.models.utils import validate_consent, validate_countries, validate_country_code, validate_interaction_id
+from common.models.utils import validate_consent, validate_countries, validate_country_code
 
 
 class AdministrativeArea(EmbeddedModel):
@@ -33,7 +33,9 @@ class LicenceForm(EmbeddedModel):
 
 class LicenceInteraction(EmbeddedModel):
     interaction_id = models.IntegerField(
-        db_column="lgilId", default=InteractionIdCodes.APPLY.value, validators=[validate_interaction_id]
+        db_column="lgilId",
+        choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
+        default=InteractionIdCodes.APPLY.value,
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId", default=0)
     licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
