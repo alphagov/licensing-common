@@ -7,7 +7,6 @@ from django_mongodb_backend.models import EmbeddedModel
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.virus_check_status import VirusCheckStatus
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
-from common.models.utils import validate_interaction_id
 
 
 class SupportingDocument(EmbeddedModel):
@@ -27,7 +26,9 @@ class SupportingDocument(EmbeddedModel):
 class Service(EmbeddedModel):
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
     interaction_id = models.IntegerField(
-        db_column="lgilId", default=InteractionIdCodes.APPLY.value, validators=[validate_interaction_id]
+        db_column="lgilId",
+        choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
+        default=InteractionIdCodes.APPLY.value,
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
 

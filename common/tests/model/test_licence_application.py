@@ -4,6 +4,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
+from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.virus_check_status import VirusCheckStatus
 from common.models.licence_application import ApplicationStatus, LicenceApplication, Service, SupportingDocument
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
@@ -18,7 +19,7 @@ def test_valid_licence_application():
         application_document=SupportingDocument(
             definition=SupportingDocumentDefinition(), _id="id", virus_check_status=VirusCheckStatus.CLEAN.value
         ),
-        service=Service(licence_code="test", interaction_id=1, interaction_sub_id=1),
+        service=Service(licence_code="test", interaction_id=InteractionIdCodes.APPLY.value, interaction_sub_id=1),
         status=ApplicationStatus(data_available=False, is_being_processed=False, collected_by_authority=False),
         application_date=now(),
         application_reference="test",
@@ -37,7 +38,7 @@ def test_valid_licence_application():
 
 
 def test_invalid_interaction_id_in_licence_application_service_throws_error():
-    expected_error_message = "Invalid interaction id"
+    expected_error_message = "Value 1 is not a valid choice."
     with pytest.raises(ValidationError) as e:
         service = Service(licence_code="test", interaction_id=1, interaction_sub_id=1)
 
