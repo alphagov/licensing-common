@@ -15,7 +15,10 @@ class SupportingDocument(EmbeddedModel):
     definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
     _id = ObjectIdField(db_column="_id")
     virus_check_status = models.CharField(
-        db_column="virusCheckStatus", max_length=255, default=VirusCheckStatus.CLEAN.value
+        db_column="virusCheckStatus",
+        max_length=255,
+        choices=[(tag.value, tag.name) for tag in VirusCheckStatus],
+        default=VirusCheckStatus.CLEAN.value,
     )
 
     @property

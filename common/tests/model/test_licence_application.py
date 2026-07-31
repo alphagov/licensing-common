@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+from bson import ObjectId
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
@@ -48,7 +49,10 @@ def test_invalid_interaction_id_in_licence_application_service_throws_error():
             licence="test",
             supporting_documents_online=True,
             application_document=SupportingDocument(
-                definition=SupportingDocumentDefinition(), _id="id", virus_check_status=VirusCheckStatus.CLEAN.value
+                filename="test",
+                definition=SupportingDocumentDefinition(),
+                _id=ObjectId(),
+                virus_check_status=VirusCheckStatus.CLEAN.value,
             ),
             licence_code="test",
             interaction_id=1,
@@ -78,3 +82,12 @@ def test_is_virus_detected_in_file():
 
     infected_document = SupportingDocument(virus_check_status=VirusCheckStatus.FOUND_VIRUS.value)
     assert infected_document.is_virus_detected_in_file is True
+
+
+def test_valid_virus_check_status():
+    expected_error_message = "Value 'Ok' is not a valid choice."
+    with pytest.raises(ValidationError) as e:
+        document = SupportingDocument(virus_check_status="Ok")
+        document.full_clean()
+
+    assert expected_error_message in e.value.message_dict["virus_check_status"]
