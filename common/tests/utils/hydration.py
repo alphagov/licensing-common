@@ -12,7 +12,6 @@ def verify_model_against_collection(
     The aim is to see if the models are missing columns or not hydrating correctly by comparing raw data to the model.
     The usefulness of the test depends entirely on having access to a db with data to sample.
     """
-
     # sample size checks
     sample_docs = list(db[collection_name].aggregate([{"$sample": {"size": sample_size}}]))
     actual_sample_size = len(sample_docs)
@@ -20,9 +19,12 @@ def verify_model_against_collection(
     if actual_sample_size < sample_size:
         warnings.warn(UserWarning(f"{sample_size} asked for, only {actual_sample_size} found."), stacklevel=2)
 
+    return check_for_mismatches(model_class, sample_docs)
+
+
+def check_for_mismatches(model_class: type[models.Model], sample_docs):
     # make sure it returns at least an empty array for mismatches
     mismatches = []
-
     # create a dictionary that maps database column names to django field names
     db_column_to_field = {}
     for field in model_class._meta.fields:
@@ -37,32 +39,45 @@ def verify_model_against_collection(
         except model_class.DoesNotExist:
             mismatches.append(f"[{model_class.__name__}] Doc _id={doc_id} missing in Django ORM.")
             continue
-
-        # check every column on the document has a corresponding django model attribute
+        # check data structure and values match
         for raw_key, raw_val in doc.items():
-            if raw_key not in db_column_to_field:
-                mismatches.append(f"[{model_class.__name__}] Key '{raw_key}' in DB missing from Django model.")
+            # are we missing an entire property? If yes log it and dont both checking the values
+            structure_mismatch = check_data_structure(model_class, db_column_to_field, raw_key)
+            if structure_mismatch is not None:
+                mismatches.append(structure_mismatch)
                 continue
-
-            field_name = db_column_to_field[raw_key]
-            django_val = getattr(django_obj, field_name)
-
-            # to compare we need common ground, normalising the data gets both in a comparable format such as ints, or
-            # a dictionary, etc,  and handles known data type quirks
-            normalised_bson = normalise_bson(raw_val)
-            normalised_django = normalise_django(django_val)
-
-            # fixes issues caused by nosqls ability to omit entire columns
-            remove_unwanted_default_values_from_django(normalised_bson, normalised_django)
-
-            # at this point we should have 2 identical values, whether it's basic ints or a complex nested dictionary
-            # if we don't then the model does not represent the database.
-            if normalised_bson != normalised_django:
-                mismatches.append(
-                    f"[{model_class.__name__}] model error. Doc _id: {doc_id} | Field: '{field_name}'\n"
-                    f"  Db value does not match model value."
-                )
+            # if the structure is fine, check values
+            mismatches += check_values(db_column_to_field, model_class, raw_key, raw_val, doc_id, django_obj)
     return mismatches
+
+
+def check_data_structure(model_class, db_column_to_field, raw_key):
+    if raw_key not in db_column_to_field:
+        return f"[{model_class.__name__}] Key '{raw_key}' in DB missing from Django model."
+    return None
+
+
+def check_values(db_column_to_field, model_class, raw_key, raw_val, doc_id, django_obj):
+    value_mismatches = []
+    field_name = db_column_to_field[raw_key]
+    django_val = getattr(django_obj, field_name)
+
+    # to compare we need common ground, normalising the data gets both in a comparable format such as ints, or
+    # a dictionary, etc,  and handles known data type quirks
+    normalised_bson = normalise_bson(raw_val)
+    normalised_django = normalise_django(django_val)
+
+    # fixes issues caused by nosqls ability to omit entire columns
+    remove_unwanted_default_values_from_django(normalised_bson, normalised_django)
+
+    # at this point we should have 2 identical values, whether it's basic ints or a complex nested dictionary
+    # if we don't then the model does not represent the database.
+    if normalised_bson != normalised_django:
+        value_mismatches.append(
+            f"[{model_class.__name__}] model error. Doc _id: {doc_id} | Field: '{field_name}'\n"
+            f"  Db value does not match model value."
+        )
+    return value_mismatches
 
 
 def normalise_common(val, normaliser_fn):
