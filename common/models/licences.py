@@ -4,15 +4,26 @@ from django.db import models
 from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
+from common.enums.countries import Countries, CountryCodes
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.tacit_consent import TacitConsent
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
-from common.models.utils import validate_consent, validate_countries, validate_country_code
 
 
 class AdministrativeArea(EmbeddedModel):
-    code = models.CharField(max_length=1, validators=[validate_country_code])
-    countries = ArrayField(models.CharField(), validators=[validate_countries])
+    code = models.CharField(
+        max_length=1,
+        choices=[(tag.value, tag.name) for tag in CountryCodes],
+        error_messages={"invalid_choice": "Invalid country code."},
+    )
+    countries = ArrayField(
+        models.CharField(
+            max_length=255,
+            choices=[(tag.value, tag.name) for tag in Countries],
+            error_messages={"invalid_choice": "'%(value)s' is not a valid country."},
+        ),
+        error_messages={"item_invalid": "Invalid entry:"},
+    )
     name = models.CharField(max_length=255)
 
     def clean(self):
@@ -55,8 +66,9 @@ class LicenceInteraction(EmbeddedModel):
         db_column="tacitConsent",
         max_length=255,
         blank=True,
+        choices=[(tag.value, tag.name) for tag in TacitConsent],
         default=TacitConsent.PERMITTED.value,
-        validators=[validate_consent],
+        error_messages={"invalid_choice": "Invalid consent"},
     )
 
 
