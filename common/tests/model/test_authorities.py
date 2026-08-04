@@ -26,7 +26,7 @@ def test_invalid_snac_code_throws_error():
 
 
 def test_invalid_country_throws_error():
-    expected_error_message = "Invalid country"
+    expected_error_message = "Invalid entry: 'test' is not a valid country."
 
     with pytest.raises(ValidationError) as e:
         authority = Authority(
@@ -36,7 +36,7 @@ def test_invalid_country_throws_error():
             full_name="test",
             authority_url="",
             snac_codes=["00AA"],
-            countries=["TEST"],
+            countries=["test"],
             encoded_image="",
             licence_details=[
                 LicenceDetails(
