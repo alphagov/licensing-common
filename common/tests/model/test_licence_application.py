@@ -16,24 +16,27 @@ def test_valid_licence_application():
         applicant_email="test@test.com",
         authority="test",
         licence="test",
-        supporting_documents_online=True,
-        application_document=SupportingDocument(
+        has_supporting_documents_online=True,
+        application_pdf=SupportingDocument(
             definition=SupportingDocumentDefinition(), _id=ObjectId(), virus_check_status=VirusCheckStatus.CLEAN.value
         ),
         licence_code="test",
         interaction_id=InteractionIdCodes.APPLY.value,
         interaction_sub_id=0,
-        status=ApplicationStatus(data_available=False, is_being_processed=False, collected_by_authority=False),
         application_date=now(),
-        application_reference="test",
+        application_status=ApplicationStatus(
+            is_data_available=False, is_being_processed=False, collected_by_authority=False
+        ),
+        extracted_application_data="test",
+        application_reference_number="test",
         authority_application_reference="test",
         expected_processing_date=now() + timedelta(days=7),
-        tacit_consent=False,
+        has_tacit_consent=False,
         required_payment_amount=PaymentAmount(),
-        fee_required=False,
-        variable_fee=False,
+        is_fee_required=False,
+        has_variable_fee=False,
         payment_reference_id="test",
-        application_main_form="test",
+        application_form_metadata="test",
         collected_by="test@test.com",
         under_process_by="test@test.com",
     )
