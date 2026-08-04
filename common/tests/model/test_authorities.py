@@ -5,7 +5,7 @@ from common.models.authorities import Authority, ContactDetails, LicenceDetails
 
 
 def test_invalid_snac_code_throws_error():
-    expected_error_message = "Snac codes not valid"
+    expected_error_message = "Invalid entry: 'test' is not a valid snac code."
 
     with pytest.raises(ValidationError) as e:
         authority = Authority(

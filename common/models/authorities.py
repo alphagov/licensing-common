@@ -4,7 +4,7 @@ from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, E
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.countries import Countries
-from common.models.utils import validate_snac_codes
+from common.enums.snac_codes import SnacCodes
 
 
 class LicenceDetails(EmbeddedModel):
@@ -32,11 +32,15 @@ class Authority(models.Model):
     full_name = models.CharField(db_column="fullName", max_length=255)
     authority_url = models.CharField(db_column="authorityUrl", max_length=255, blank=True)
     snac_codes = ArrayField(
-        models.CharField(max_length=255),
+        models.CharField(
+            max_length=255,
+            choices=[(code, tag.name) for tag in SnacCodes for code in tag.value],
+            error_messages={"invalid_choice": "'%(value)s' is not a valid snac code."},
+        ),
         db_column="snacCodes",
         default=[],
-        validators=[validate_snac_codes],
         blank=True,
+        error_messages={"item_invalid": "Invalid entry:"},
     )
     countries = ArrayField(
         models.CharField(
