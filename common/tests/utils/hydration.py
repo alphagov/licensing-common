@@ -26,9 +26,7 @@ def check_for_mismatches(model_class: type[models.Model], sample_docs):
     # make sure it returns at least an empty array for mismatches
     mismatches = []
     # create a dictionary that maps database column names to django field names
-    db_column_to_field = {}
-    for field in model_class._meta.fields:
-        db_column_to_field[field.column] = field.name
+    db_column_to_field = map_columns_to_fields(model_class)
 
     # actual comparisons start here
     for doc in sample_docs:
@@ -47,8 +45,15 @@ def check_for_mismatches(model_class: type[models.Model], sample_docs):
                 mismatches.append(structure_mismatch)
                 continue
             # if the structure is fine, check values
-            mismatches += check_values(db_column_to_field, model_class, raw_key, raw_val, doc_id, django_obj)
+            mismatches += check_values(model_class, db_column_to_field, raw_key, raw_val, doc_id, django_obj)
     return mismatches
+
+
+def map_columns_to_fields(model_class):
+    db_column_to_field = {}
+    for field in model_class._meta.fields:
+        db_column_to_field[field.column] = field.name
+    return db_column_to_field
 
 
 def check_data_structure(model_class, db_column_to_field, raw_key):
@@ -57,7 +62,7 @@ def check_data_structure(model_class, db_column_to_field, raw_key):
     return None
 
 
-def check_values(db_column_to_field, model_class, raw_key, raw_val, doc_id, django_obj):
+def check_values(model_class, db_column_to_field, raw_key, raw_val, doc_id, django_obj):
     value_mismatches = []
     field_name = db_column_to_field[raw_key]
     django_val = getattr(django_obj, field_name)
