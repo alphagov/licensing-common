@@ -2,7 +2,6 @@ from django.core.exceptions import ValidationError
 
 from common.enums.countries import Countries, CountryCodes
 from common.enums.snac_codes import SnacCodes
-from common.enums.tacit_consent import TacitConsent
 
 
 def validate_countries(countries: list):
@@ -14,11 +13,6 @@ def validate_countries(countries: list):
 def validate_country_code(country_code: str):
     if country_code not in CountryCodes:
         raise ValidationError("Invalid country code")
-
-
-def validate_consent(consent: str):
-    if consent not in TacitConsent:
-        raise ValidationError("Invalid consent")
 
 
 def validate_snac_codes(snac_codes: list):
