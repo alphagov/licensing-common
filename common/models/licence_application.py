@@ -18,6 +18,7 @@ class SupportingDocument(EmbeddedModel):
         db_column="virusCheckStatus",
         max_length=255,
         choices=[(tag.value, tag.name) for tag in VirusCheckStatus],
+        error_messages={"invalid_choice": "'%(value)s' is not a valid virus check status."},
         default=VirusCheckStatus.CLEAN.value,
     )
 

@@ -58,7 +58,7 @@ def test_is_virus_detected_in_file():
 
 
 def test_valid_virus_check_status():
-    expected_error_message = "Value 'Ok' is not a valid choice."
+    expected_error_message = "'Ok' is not a valid virus check status."
     with pytest.raises(ValidationError) as e:
         document = SupportingDocument(virus_check_status="Ok")
         document.full_clean()
