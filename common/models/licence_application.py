@@ -18,8 +18,8 @@ class SupportingDocument(EmbeddedModel):
         db_column="virusCheckStatus",
         max_length=255,
         choices=[(tag.value, tag.name) for tag in VirusCheckStatus],
-        error_messages={"invalid_choice": "'%(value)s' is not a valid virus check status."},
         default=VirusCheckStatus.CLEAN.value,
+        error_messages={"invalid_choice": "'%(value)s' is not a valid virus check status."},
     )
 
     @property
@@ -53,8 +53,8 @@ class LicenceApplication(models.Model):
     interaction_id = models.IntegerField(
         db_column="lgilId",
         choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
-        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
         default=InteractionIdCodes.APPLY.value,
+        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
     application_date = models.DateTimeField(db_column="applicationDate", blank=True, default=now)

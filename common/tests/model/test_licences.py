@@ -62,7 +62,7 @@ def test_licence_interaction_invalid_consent_throws_error():
 
 
 def test_licence_interaction_invalid_interaction_id_throws_error():
-    expected_error_message = "Value 1 is not a valid choice."
+    expected_error_message = "'1' is not a valid Interaction Id."
     with pytest.raises(ValidationError) as e:
         interaction = LicenceInteraction(licence_interaction_name="test", interaction_id=1)
 

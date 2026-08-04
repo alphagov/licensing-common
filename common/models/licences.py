@@ -36,6 +36,7 @@ class LicenceInteraction(EmbeddedModel):
         db_column="lgilId",
         choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
         default=InteractionIdCodes.APPLY.value,
+        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId", default=0)
     licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
