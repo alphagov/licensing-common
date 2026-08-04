@@ -1,16 +1,9 @@
 import bson
-from django.core.exceptions import ValidationError
 from django.db import models
 from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
-from common.enums.snac_codes import SnacCodes
-from common.models.utils import validate_countries
-
-
-def validate_snac_codes(snac_codes: list):
-    if not set(snac_codes).issubset(set(SnacCodes.list())):
-        raise ValidationError("Snac codes not valid")
+from common.models.utils import validate_countries, validate_snac_codes
 
 
 class LicenceDetails(EmbeddedModel):

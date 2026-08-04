@@ -6,7 +6,8 @@ from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.tacit_consent import TacitConsent
-from common.models.utils import validate_consent, validate_countries, validate_country_code, validate_interaction_id
+from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
+from common.models.utils import validate_consent, validate_countries, validate_country_code
 
 
 class AdministrativeArea(EmbeddedModel):
@@ -21,10 +22,6 @@ class AdministrativeArea(EmbeddedModel):
             raise ValidationError("Invalid name")
 
 
-class PaymentAmount(EmbeddedModel):
-    pence = models.IntegerField(default=0)
-
-
 class LicenceForm(EmbeddedModel):
     name = models.CharField(max_length=255, default="defaultName")
     sub_form = models.IntegerField(db_column="subForm", default=0)
@@ -34,15 +31,12 @@ class LicenceForm(EmbeddedModel):
     form_version = models.IntegerField(db_column="formVersion", default=1)
 
 
-class SupportingDocumentDefinition(EmbeddedModel):
-    name = models.CharField(max_length=255, blank=True, default="")
-    description = models.TextField(blank=True)
-    is_mandatory = models.BooleanField(db_column="isMandatory", default=False, blank=True)
-
-
 class LicenceInteraction(EmbeddedModel):
     interaction_id = models.IntegerField(
-        db_column="lgilId", default=InteractionIdCodes.APPLY.value, validators=[validate_interaction_id]
+        db_column="lgilId",
+        choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
+        default=InteractionIdCodes.APPLY.value,
+        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId", default=0)
     licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
