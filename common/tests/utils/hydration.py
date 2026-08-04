@@ -40,7 +40,7 @@ def verify_model_against_collection(
 
         # check every column on the document has a corresponding django model attribute
         for raw_key, raw_val in doc.items():
-            if raw_key not in db_column_to_field.keys():
+            if raw_key not in db_column_to_field:
                 mismatches.append(f"[{model_class.__name__}] Key '{raw_key}' in DB missing from Django model.")
                 continue
 
@@ -150,6 +150,7 @@ def remove_unwanted_default_values_from_django(bson_val, django_val):
             # this does assume the default value is either going to be none or empty string so it's  a bit fragile
             if django_val[key] in (None, "") and key not in bson_val:
                 del django_val[key]
+            # recurse in case it's an embedded model that needs fixing
             elif key in bson_val:
                 remove_unwanted_default_values_from_django(bson_val[key], django_val[key])
 
