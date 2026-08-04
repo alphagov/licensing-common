@@ -41,7 +41,7 @@ def test_valid_licence_application():
 
 
 def test_invalid_interaction_id_in_licence_application_service_throws_error():
-    expected_error_message = "Value 1 is not a valid choice."
+    expected_error_message = "'1' is not a valid Interaction Id."
     with pytest.raises(ValidationError) as e:
         licence_application = LicenceApplication(interaction_id=1)
         licence_application.full_clean()

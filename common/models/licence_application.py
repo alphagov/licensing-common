@@ -53,6 +53,7 @@ class LicenceApplication(models.Model):
     interaction_id = models.IntegerField(
         db_column="lgilId",
         choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
+        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
         default=InteractionIdCodes.APPLY.value,
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
