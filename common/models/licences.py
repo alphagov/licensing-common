@@ -7,7 +7,7 @@ from django_mongodb_backend.models import EmbeddedModel
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.tacit_consent import TacitConsent
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
-from common.models.utils import validate_consent, validate_countries, validate_country_code
+from common.models.utils import validate_countries, validate_country_code
 
 
 class AdministrativeArea(EmbeddedModel):
@@ -55,8 +55,9 @@ class LicenceInteraction(EmbeddedModel):
         db_column="tacitConsent",
         max_length=255,
         blank=True,
+        choices=[(tag.value, tag.name) for tag in TacitConsent],
         default=TacitConsent.PERMITTED.value,
-        validators=[validate_consent],
+        error_messages={"invalid_choice": "Invalid consent"},
     )
 
 
