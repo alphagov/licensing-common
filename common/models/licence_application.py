@@ -27,9 +27,9 @@ class SupportingDocument(EmbeddedModel):
 
 
 class ApplicationStatus(EmbeddedModel):
-    data_available = models.BooleanField(db_column="isDataAvailable", default=False)
+    is_data_available = models.BooleanField(db_column="isDataAvailable", default=False)
     is_being_processed = models.BooleanField(db_column="isBeingProcessed", default=False)
-    processed = models.BooleanField(db_column="successfullyProcessed", default=False)
+    is_processed = models.BooleanField(db_column="successfullyProcessed", default=False)
     collected_by_authority = models.BooleanField(db_column="isCollectedByAuthority", default=False)
     collection_date = models.DateTimeField(db_column="collectionDate", blank=True, null=True)
     is_expired = models.BooleanField(db_column="isExpired", default=False)
@@ -38,7 +38,7 @@ class ApplicationStatus(EmbeddedModel):
     process_start_date = models.DateTimeField(db_column="processStartDate", blank=True, null=True)
     is_downloaded = models.BooleanField(db_column="isDownloaded", default=False)
     download_date = models.DateTimeField(db_column="downloadDate", blank=True, null=True)
-    visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
+    is_visible_to_authorities = models.BooleanField(db_column="isVisibleToAuthorities", default=False)
 
 
 class LicenceApplication(models.Model):
