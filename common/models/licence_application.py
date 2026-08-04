@@ -10,9 +10,9 @@ from common.models.shared_models import PaymentAmount, SupportingDocumentDefinit
 
 
 class SupportingDocument(EmbeddedModel):
-    filename = models.CharField(db_column="filename", max_length=255, blank=True)
+    file_name = models.CharField(db_column="filename", max_length=255, blank=True)
     stream = models.BinaryField(null=True, blank=True)
-    definition = EmbeddedModelField(SupportingDocumentDefinition, db_column="definition")
+    definition = EmbeddedModelField(SupportingDocumentDefinition)
     _id = ObjectIdField(db_column="_id")
     virus_check_status = models.CharField(
         db_column="virusCheckStatus",
@@ -46,7 +46,7 @@ class LicenceApplication(models.Model):
     applicant_email = models.EmailField(db_column="applicantEmail", default="", max_length=255, blank=True)
     authority = models.CharField(db_column="authority", max_length=255, default="", blank=True)
     licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)
-    supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
+    has_supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
     application_pdf = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
     interaction_id = models.IntegerField(
@@ -60,16 +60,16 @@ class LicenceApplication(models.Model):
         SupportingDocument, db_column="applicationDocuments", default=[], blank=True
     )
     application_status = EmbeddedModelField(ApplicationStatus, db_column="status")
-    application_data = models.TextField(db_column="applicationData", default="", blank=True)
+    extracted_application_data = models.TextField(db_column="applicationData", default="", blank=True)
     application_reference_number = models.CharField(
         db_column="applicationRefNo", max_length=255, default="", blank=True
     )
     authority_application_reference = models.CharField(db_column="authorityAppReference", max_length=255, blank=True)
     expected_processing_date = models.DateTimeField(db_column="expectedProcessingDate", blank=True)
-    tacit_consent = models.BooleanField(db_column="tacitConsent", default=False)
+    has_tacit_consent = models.BooleanField(db_column="tacitConsent", default=False)
     required_payment_amount = EmbeddedModelField(PaymentAmount, db_column="requiredPaymentAmount", blank=True)
-    fee_required = models.BooleanField(db_column="isFeeRequired", default=False)
-    variable_fee = models.BooleanField(db_column="isVariableFee", default=False)
+    is_fee_required = models.BooleanField(db_column="isFeeRequired", default=False)
+    has_variable_fee = models.BooleanField(db_column="isVariableFee", default=False)
     payment_reference_id = models.CharField(db_column="paymentReferenceId", max_length=255, blank=True)
     application_form_metadata = models.JSONField(db_column="applicationMainForm", default=dict, blank=True)
     collected_by = models.EmailField(db_column="collectedBy", max_length=255, blank=True)
