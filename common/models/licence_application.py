@@ -66,7 +66,7 @@ class LicenceApplication(models.Model):
     )
     authority_application_reference = models.CharField(db_column="authorityAppReference", max_length=255, blank=True)
     expected_processing_date = models.DateTimeField(db_column="expectedProcessingDate", blank=True)
-    tacit_consent = models.BooleanField(db_column="tacitConsent", default=False)
+    has_tacit_consent = models.BooleanField(db_column="tacitConsent", default=False)
     required_payment_amount = EmbeddedModelField(PaymentAmount, db_column="requiredPaymentAmount", blank=True)
     fee_required = models.BooleanField(db_column="isFeeRequired", default=False)
     variable_fee = models.BooleanField(db_column="isVariableFee", default=False)
