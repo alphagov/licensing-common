@@ -17,7 +17,7 @@ def test_valid_admin_area():
 
 
 def test_admin_area_country_invalid_throws_error():
-    expected_error_message = "Invalid country. 'test' is not a valid country."
+    expected_error_message = "Invalid entry: 'test' is not a valid country."
 
     with pytest.raises(ValidationError) as e:
         admin_area = AdministrativeArea(code=CountryCodes.ALL.value, countries=["test"], name="test")

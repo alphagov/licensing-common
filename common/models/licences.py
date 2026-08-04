@@ -22,7 +22,7 @@ class AdministrativeArea(EmbeddedModel):
             choices=[(tag.value, tag.name) for tag in Countries],
             error_messages={"invalid_choice": "'%(value)s' is not a valid country."},
         ),
-        error_messages={"item_invalid": "Invalid country."},
+        error_messages={"item_invalid": "Invalid entry:"},
     )
     name = models.CharField(max_length=255)
 
