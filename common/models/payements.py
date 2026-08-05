@@ -3,16 +3,17 @@ from django.db import models
 from django.utils.timezone import now
 from django_mongodb_backend.fields import EmbeddedModelField
 from django_mongodb_backend.models import EmbeddedModel
-from enums.payment_providers import PaymentProviders
-from enums.payment_status import PaymentStatuses
-from models.shared_models import PaymentAmount
+
+from common.enums.payment_providers import PaymentProviders
+from common.enums.payment_status import PaymentStatuses
+from common.models.shared_models import PaymentAmount
 
 
 class PaymentStatus(EmbeddedModel):
     status = models.CharField(
         max_length=255,
         choices=[(tag.value, tag.name) for tag in PaymentStatuses],
-        error_messages={"invalid_choice": "Payment status: %(value)s is not a valid payment status"},
+        error_messages={"invalid_choice": "Payment status %(value)s is not a valid payment status"},
     )
 
 
@@ -29,7 +30,7 @@ class Payment(models.Model):
         choices=[(tag.value, tag.name) for tag in PaymentProviders],
         error_messages={"invalid_choice": "Payment provider %(value)s is not supported"},
     )
-    payment_parameters = models.JSONField(db_column="paymentParameters", default=dict)
+    payment_parameters = models.JSONField(db_column="paymentParameters", default=dict, blank=True)
     payment_status = EmbeddedModelField(PaymentStatus, db_column="status")
     amount_paid_in_pence = models.IntegerField(db_column="paidAmountInPence", blank=True, null=True)
     receipt = models.CharField(db_column="receipt", max_length=255, blank=True)

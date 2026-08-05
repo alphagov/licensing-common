@@ -4,5 +4,5 @@ from enum import StrEnum
 class PaymentProviders(StrEnum):
     CIVICA = "CIVICA"
     NORTHGATE = "NORTHGATE"
-    WOLRDPAY = "WOLRDPAY"
+    WORLDPAY = "WORLDPAY"
     ACCESS_PAY_SUITE = "ACCESS PAYSUITE"
