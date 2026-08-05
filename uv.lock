@@ -21,7 +21,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "django", specifier = "==5.2.0" },
+    { name = "django", specifier = "~=5.2" },
     { name = "django-mongodb-backend", specifier = ">=5.2.3" },
     { name = "pymongo", specifier = ">=4.17.0" },
     { name = "pytest-django", specifier = ">=4.12.0" },
