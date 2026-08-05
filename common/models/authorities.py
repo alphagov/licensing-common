@@ -1,16 +1,10 @@
 import bson
-from django.core.exceptions import ValidationError
 from django.db import models
 from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
+from common.enums.countries import Countries
 from common.enums.snac_codes import SnacCodes
-from common.models.utils import validate_countries
-
-
-def validate_snac_codes(snac_codes: list):
-    if not set(snac_codes).issubset(set(SnacCodes.list())):
-        raise ValidationError("Snac codes not valid")
 
 
 class LicenceDetails(EmbeddedModel):
@@ -38,14 +32,25 @@ class Authority(models.Model):
     full_name = models.CharField(db_column="fullName", max_length=255)
     authority_url = models.CharField(db_column="authorityUrl", max_length=255, blank=True)
     snac_codes = ArrayField(
-        models.CharField(max_length=255),
+        models.CharField(
+            max_length=255,
+            choices=[(code, tag.name) for tag in SnacCodes for code in tag.value],
+            error_messages={"invalid_choice": "'%(value)s' is not a valid snac code."},
+        ),
         db_column="snacCodes",
         default=[],
-        validators=[validate_snac_codes],
         blank=True,
+        error_messages={"item_invalid": "Invalid entry:"},
     )
     countries = ArrayField(
-        models.CharField(max_length=255), db_column="countries", default=[], validators=[validate_countries]
+        models.CharField(
+            max_length=255,
+            choices=[(tag.value, tag.name) for tag in Countries],
+            error_messages={"invalid_choice": "'%(value)s' is not a valid country."},
+        ),
+        db_column="countries",
+        default=[],
+        error_messages={"item_invalid": "Invalid entry:"},
     )
     encoded_image = models.TextField(db_column="imageBase64encoded", blank=True, default="")
     licence_details = EmbeddedModelArrayField(LicenceDetails, default=[], db_column="licenceDetails")
