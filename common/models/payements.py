@@ -42,5 +42,9 @@ class Payment(models.Model):
     created_at = models.DateTimeField(db_column="createdAt", default=now)
     civica_payment_query_check_count = models.IntegerField(db_column="queryPaymentCheckCount", default=0)
 
+    class Meta:
+        db_table = "payments"
+        managed = False
+
     def __str__(self):
         return self.payment_id
