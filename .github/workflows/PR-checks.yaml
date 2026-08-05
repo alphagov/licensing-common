@@ -1,0 +1,22 @@
+name: Pull Request Checks
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Ruff Lint and Format
+    uses: ./.github/workflows/format.yaml
+    with:
+      build_branch: ${{github.event.pull_request.ref.head}}
+
+  unit-test:
+    name: Unit Test
+    uses: ./.github/workflows/unit-test.yaml
+    with:
+      build_branch: ${{ github.event.pull_request.ref.head }}
+
