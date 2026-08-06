@@ -77,3 +77,22 @@ def test_invalid_payment_provider():
         invalid_payment_provider.full_clean()
 
     assert expected_error_message in e.value.message_dict["payment_provider"]
+
+
+def test_authority_payment_accounts_id():
+    authority_payment_accounts = AuthorityPaymentAccounts(
+        authority_url_slug="test",
+        payment_provider=PaymentProviders.NORTHGATE,
+        accounts=[],
+        merchant_id="test",
+        provider_shared_secret="test",
+        provider_shared_post_salt="test",
+        mac_secret_key="test",
+        callback_override_url="test",
+        send_test_payment=False,
+        access_pay_suite_accepted_cards=AccessPaySuiteAcceptedCards(),
+        worldpay_md5_shared_secret="test",
+    )
+    authority_payment_accounts.full_clean()
+
+    assert authority_payment_accounts.id == "test"

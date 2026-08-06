@@ -24,7 +24,7 @@ class AccessPaySuiteAcceptedCards(EmbeddedModel):
 
 
 class AuthorityPaymentAccounts(models.Model):
-    authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True)
+    authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True, primary_key=True)
     payment_provider = models.CharField(
         db_column="paymentProvider",
         max_length=255,
@@ -57,3 +57,7 @@ class AuthorityPaymentAccounts(models.Model):
 
     def __str__(self):
         return f"{self.authority_url_slug}"
+
+    @property
+    def id(self):
+        return self.authority_url_slug
