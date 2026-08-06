@@ -1,4 +1,6 @@
+import pytest
 from bson import ObjectId
+from django.core.exceptions import ValidationError
 
 from common.enums.payment_providers import PaymentProviders
 from common.models.authority_payment_accounts import (
@@ -40,3 +42,12 @@ def test_valid_authority_payment_accounts():
         worldpay_md5_shared_secret="test",
     )
     authority_payment_accounts.full_clean()
+
+
+def test_invalid_payment_provider():
+    expected_error_message = "'test' is not a valid payment provider."
+    with pytest.raises(ValidationError) as e:
+        invalid_payment_provider = AuthorityPaymentAccounts(payment_provider="test")
+        invalid_payment_provider.full_clean()
+
+    assert expected_error_message in e.value.message_dict["payment_provider"]

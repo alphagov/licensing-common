@@ -29,7 +29,7 @@ class AuthorityPaymentAccounts(models.Model):
         db_column="paymentProvider",
         max_length=255,
         choices=[(tag.value, tag.name) for tag in PaymentProviders],
-        error_messages={"invalid_choice": "Invalid payment provider."},
+        error_messages={"invalid_choice": "'%(value)s' is not a valid payment provider."},
     )
     accounts = EmbeddedModelArrayField(PaymentAccount, db_column="accounts", default=[], blank=True, null=True)
     merchant_id = models.CharField(db_column="merchantId", max_length=255)
