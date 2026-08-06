@@ -23,7 +23,7 @@ class AccessPaySuiteAcceptedCards(EmbeddedModel):
     mail_or_telephone_order = models.BooleanField(db_column="moto", default=False)
 
 
-class AuthorityPaymentAccounts:
+class AuthorityPaymentAccounts(models.Model):
     authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True)
     payment_provider = models.CharField(
         db_column="paymentProvider",
@@ -50,3 +50,10 @@ class AuthorityPaymentAccounts:
         AccessPaySuiteAcceptedCards, db_column="accessPaySuiteAcceptedCards", blank=True
     )
     worldpay_md5_shared_secret = models.CharField(db_column="worldpayMd5SharedSecret", max_length=255, blank=True)
+
+    class Meta:
+        db_table = "paymentAccounts"
+        managed = False
+
+    def __str__(self):
+        return f"{self.authority_url_slug}"
