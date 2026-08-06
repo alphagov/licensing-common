@@ -8,5 +8,5 @@ from config import settings
 def test_django_models_match_document():
     with MongoClient(settings.DOCUMENT_DB_CONN) as client:
         db = client["licensify"]
-        errors = verify_model_against_collection(db, Authority, "authorities", 1000)
+        errors = verify_model_against_collection(db, Authority, 1000)
         assert errors == []

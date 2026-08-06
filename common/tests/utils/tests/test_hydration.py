@@ -2,10 +2,10 @@ import pytest
 from bson import ObjectId
 
 from common.tests.utils.hydration import (
-    check_data_structure,
-    check_data_values,
-    map_columns_to_fields,
-    strip_django_defaults,
+    _check_data_structure,
+    _check_data_values,
+    _map_columns_to_fields,
+    _strip_django_defaults,
 )
 from common.tests.utils.tests.test_hydration_classes import (
     MockDepartment,
@@ -18,9 +18,9 @@ from common.tests.utils.tests.test_hydration_classes import (
 
 NAME = "Department of Mocks"
 NUM_EMPLOYEES = 30
-MOCK_DEPARTMENT_FIELDS = map_columns_to_fields(MockDepartment)
-MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = map_columns_to_fields(MockDepartmentUltraNest)
-MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = map_columns_to_fields(MockDepartmentWithArrayList)
+MOCK_DEPARTMENT_FIELDS = _map_columns_to_fields(MockDepartment)
+MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = _map_columns_to_fields(MockDepartmentUltraNest)
+MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = _map_columns_to_fields(MockDepartmentWithArrayList)
 
 
 @pytest.fixture
@@ -60,12 +60,14 @@ def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismat
     """
     for raw_key, raw_val in mock_bson.items():
         assert (
-            check_data_structure(model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=raw_key)
+            _check_data_structure(
+                model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=raw_key
+            )
             is None
         )
         field_name = MOCK_DEPARTMENT_FIELDS[raw_key]
         assert (
-            check_data_values(
+            _check_data_values(
                 model_class=MockDepartment,
                 field_name=field_name,
                 raw_val=raw_val,
@@ -83,7 +85,7 @@ def test_check_data_structure_detects_missing_column():
     This functionality catches missed mappings (or bad data).
     """
     extra_column = "extra_column"
-    mismatch = check_data_structure(
+    mismatch = _check_data_structure(
         model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=extra_column
     )
     assert extra_column in mismatch
@@ -94,7 +96,7 @@ def test_check_data_values_detects_value_mismatch(mock_django, doc_id):
     """
     Test check_data_values() correctly finds cases where the bson value and the django value don't match.
     """
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartment,
         field_name="num_of_employees",
         raw_val=NUM_EMPLOYEES + 1,
@@ -115,12 +117,8 @@ def test_check_data_values_detects_none_vs_value_mismatch(mock_django, doc_id):
     then on save, giving it a default value that looks like real data.
     """
     # DB has null, Django hydrated a default string
-    mismatches = check_data_values(
-        model_class=MockDepartment,
-        field_name="name",
-        raw_val=None,
-        doc_id=doc_id,
-        django_obj=mock_django,  # name="Department of Mocks"
+    mismatches = _check_data_values(
+        model_class=MockDepartment, field_name="name", raw_val=None, doc_id=doc_id, django_obj=mock_django
     )
 
     assert len(mismatches) == 1
@@ -132,7 +130,7 @@ def test_check_data_values_detects_value_type_mismatch(mock_django, doc_id):
     """
     Test check_data_values() detects different value types even if the values are logically equivalent like 2 and two.
     """
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartment,
         field_name="num_of_employees",
         raw_val=str(NUM_EMPLOYEES),
@@ -156,7 +154,7 @@ def test_nested_bson_values_can_match_embedded_models(mock_bson, doc_id, mock_de
     mock_bson["nestOne"] = {"nestTwo": {"mockNestWithValue": {"actualVal": 2}}}
     for raw_key, raw_val in mock_bson.items():
         assert (
-            check_data_structure(
+            _check_data_structure(
                 model_class=MockDepartmentUltraNest,
                 db_column_to_field=MOCK_DEPARTMENT_ULTRA_NEST_FIELDS,
                 raw_key=raw_key,
@@ -165,7 +163,7 @@ def test_nested_bson_values_can_match_embedded_models(mock_bson, doc_id, mock_de
         )
         field_name = MOCK_DEPARTMENT_ULTRA_NEST_FIELDS[raw_key]
         assert (
-            check_data_values(
+            _check_data_values(
                 model_class=MockDepartmentUltraNest,
                 field_name=field_name,
                 raw_val=raw_val,
@@ -186,7 +184,7 @@ def test_nested_bson_value_mismatches_detectable(mock_bson, doc_id, mock_departm
     mismatches = []
     for raw_key, raw_val in mock_bson.items():
         field_name = MOCK_DEPARTMENT_ULTRA_NEST_FIELDS[raw_key]
-        mismatches += check_data_values(
+        mismatches += _check_data_values(
             model_class=MockDepartmentUltraNest,
             field_name=field_name,
             raw_val=raw_val,
@@ -210,7 +208,7 @@ def test_strip_django_defaults_removes_irrelevant_defaults():
     bson_data = {}
     django_data = {"displayTitle": "", "defaultDeclarations": []}
 
-    strip_django_defaults(bson_data, django_data)
+    _strip_django_defaults(bson_data, django_data)
 
     # should remove sparse keys from django_data so no diff is raised
     assert django_data == {}
@@ -225,7 +223,7 @@ def test_strip_django_defaults_doesnt_remove_mismatched_defaults():
     django_data = {"form": {}}
 
     # shouldn't remove that form because bson data exists so it's a proper mismatch
-    strip_django_defaults(bson_data, django_data)
+    _strip_django_defaults(bson_data, django_data)
 
     assert "form" in django_data
     assert django_data["form"] == {}
@@ -243,7 +241,7 @@ def test_check_data_values_detects_data_loss_on_embedded_model(doc_id, mock_depa
     django_obj = MockDepartmentUltraNest(nest_one=MockNest1())
 
     # Check values for the 'nest_one' field
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartmentUltraNest,
         field_name="nest_one",
         raw_val=raw_bson_val,
@@ -270,7 +268,7 @@ def test_check_data_values_ignores_matching_arrays(doc_id):
     )
 
     field_name = MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS["arrayList"]
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
         raw_val=array_list_bson,
@@ -296,7 +294,7 @@ def test_check_data_values_detects_array_length_mismatch():
         array_list=[MockNestWithValue(actual_val="one"), MockNestWithValue(actual_val="two")]
     )
     field_name = MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS["arrayList"]
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
         raw_val=array_list_bson,
@@ -317,7 +315,7 @@ def test_check_data_values_detects_item_value_mismatch_inside_array(doc_id):
     )
 
     field_name = MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS["arrayList"]
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
         raw_val=array_list_bson,
@@ -346,7 +344,7 @@ def test_check_data_values_detects_missing_nested_properties(doc_id, mock_depart
         }
     }
 
-    mismatches = check_data_values(
+    mismatches = _check_data_values(
         model_class=MockDepartmentUltraNest,
         field_name="nest_one",
         raw_val=nested_bson_val,
