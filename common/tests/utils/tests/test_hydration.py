@@ -7,7 +7,7 @@ from common.tests.utils.hydration import (
     _map_columns_to_fields,
     _strip_django_defaults,
 )
-from common.tests.utils.tests.test_hydration_classes import (
+from common.tests.utils.tests.hydration_classes_for_testing import (
     MockDepartment,
     MockDepartmentUltraNest,
     MockDepartmentWithArrayList,
