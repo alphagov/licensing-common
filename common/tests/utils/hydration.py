@@ -166,7 +166,7 @@ def _normalise_django(val):
     if isinstance(val, EmbeddedModel):
         normalised_dict = {}
         for field in val._meta.fields:
-            if field.primary_key:
+            if field.primary_key and field.auto_created:
                 continue
             field_value = getattr(val, field.name)
             normalised_dict[field.column] = _normalise_django(field_value)
