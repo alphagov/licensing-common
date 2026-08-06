@@ -1,5 +1,5 @@
 from django.db import models
-from django_mongodb_backend.fields import EmbeddedModelArrayField, ObjectIdField
+from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.payment_providers import PaymentProviders
@@ -46,7 +46,7 @@ class AuthorityPaymentAccounts(models.Model):
     mac_secret_key = models.CharField(db_column="macSecretKey", max_length=255, blank=True)
     callback_override_url = models.CharField(db_column="callbackOverride", max_length=255, blank=True)
     send_test_payment = models.BooleanField(db_column="sendTestPayment", default=False, blank=True)
-    access_pay_suite_accepted_cards = EmbeddedModel(
+    access_pay_suite_accepted_cards = EmbeddedModelField(
         AccessPaySuiteAcceptedCards, db_column="accessPaySuiteAcceptedCards", blank=True
     )
     worldpay_md5_shared_secret = models.CharField(db_column="worldpayMd5SharedSecret", max_length=255, blank=True)
