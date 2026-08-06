@@ -2,12 +2,14 @@ name: Lint and Format
 
 on:
   workflow_call:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
+    inputs:
+      build_branch:
+        type: string
+        description: "Branch to run checks against"
+        required: true
+
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -16,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.inputs.build_branch }}
 
       - name: Install UV
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
@@ -28,6 +32,9 @@ jobs:
       - name: Lint (fix)
         run: uv run ruff check --fix --output-format=github
 
+      - name: Minimize uv cache
+        run: uv cache prune --ci
+
   format:
     name: Ruff Format
     runs-on: ubuntu-latest
@@ -35,6 +42,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.inputs.build_branch }}
 
       - name: Install UV
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
@@ -46,3 +55,6 @@ jobs:
 
       - name: Run Format
         run: uv run ruff format --check
+
+      - name: Minimize uv cache
+        run: uv cache prune --ci

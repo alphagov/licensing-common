@@ -1,0 +1,41 @@
+name: Unit Test
+
+on:
+  workflow_call:
+    inputs:
+      build_branch:
+        type: string
+        description: "Branch to run tests against"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  unit-test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.inputs.build_branch }}
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          activate-environment: 'true'
+
+      - name: Run tests
+        run: make test
+        env:
+          DOCUMENTDB_ALLOW_INVALID_CERTS: true
+
+      - name: Minimize uv cache
+        run: uv cache prune --ci
+
