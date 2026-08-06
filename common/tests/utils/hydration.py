@@ -10,7 +10,7 @@ from pymongo.database import Database
 logger = logging.getLogger(__name__)
 
 
-def verify_model_against_collection(db: Database, model_class: type[models.Model], sample_size=100, show_diffs=False):
+def verify_model_against_collection(db: Database, model_class: type[models.Model], sample_size=None, show_diffs=False):
     """
     This function compares actual BSON documents from the database with a django model and reports any issues.
 
@@ -22,14 +22,18 @@ def verify_model_against_collection(db: Database, model_class: type[models.Model
     increase confidence in initial project release but can help detect database drift and bad data.
     """
     collection_name = model_class._meta.db_table
-    # sample size checks
-    sample_docs = list(db[collection_name].aggregate([{"$sample": {"size": sample_size}}]))
+    # sample checks
+    if sample_size == "all" or sample_size is None:
+        sample_docs = list(db[collection_name].find())
+    else:
+        sample_docs = list(db[collection_name].aggregate([{"$sample": {"size": sample_size}}]))
     actual_sample_size = len(sample_docs)
     if actual_sample_size == 0:
         raise ValueError(f"Collection '{collection_name}' has no data")
-    if actual_sample_size < sample_size:
+    elif isinstance(sample_size, int) and actual_sample_size < sample_size:
         warnings.warn(UserWarning(f"{sample_size} asked for, only {actual_sample_size} found."), stacklevel=2)
-
+    elif actual_sample_size < 100:
+        warnings.warn(UserWarning("Less than 100 items sampled"), stacklevel=2)
     mismatches = _check_for_mismatches(model_class, sample_docs, show_diffs)
     logger.info(
         "[%s] Verified %s docs in '%s'. Found %s mismatch(es).",
@@ -114,7 +118,10 @@ def _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, sho
         # use pytest common/tests/hydration/[test_here].py -s --show-diffs for this to log
         # this is to make it almost impossible for any PII to get logged accidentally
         if show_diffs:
-            logger.warning(diffs.pretty())
+            logger.warning(doc_id)
+            pretty = diffs.pretty()
+            printable_pretty = str(pretty).replace("root", field_name, 1)
+            logger.warning("Issue for document %s: \n %s", doc_id, printable_pretty)
 
     return value_mismatches
 
