@@ -12,7 +12,7 @@ Licensing Common holds models, and logic shared across different components of t
 
 ## Mise
 
-This project uses [mise-en-place](https://mise.jdx.dev/) to provide specific versions of tools, listed in .tool-versions. You should set up mise to [activate automatically](https://mise.jdx.dev/getting-started.html#activate-mise)
+This project uses [mise-en-place](https://mise.jdx.dev/) to provide specific versions of tools, listed in .tool-versions. You should set up mise to [activate automatically](https://mise.jdx.dev/getting-started.html#activate-mise) with your shell, then run `mise install`.
 
 ## UV
 
@@ -22,19 +22,9 @@ To install UV if not already present, run the following command:
 
 ### MacOS
 
-```
-brew install uv
-```
-
 Use `make sync` to create a virtual environment with all necessary dependencies and packages already resolved. This will also happen automatically when running other make commands.
 
-Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `uv` hasn't already done this for you
-
-## Direnv
-
-Get direnv to load required environment variables automatically by setting up the [direnv hook](https://direnv.net/docs/hook.html) to run when your shell starts up.
-
-You will also need to allow direnv to load environment variables from this directory with `direnv allow .`
+Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `mise` hasn't already done this for you.
 
 ## Pre-commit
 
