@@ -21,7 +21,13 @@ def db_tracker():
 
 @pytest.fixture
 def db_cleanup():
-    def _cleanup(model: Model, created_ids: set = set, original_state: dict = dict):
+    def _cleanup(model: Model, created_ids: set | None = None, original_state: dict | None = None):
+        if created_ids is None:
+            created_ids = set()
+
+        if original_state is None:
+            original_state = {}
+
         for record_id in created_ids:
             object_to_delete = model.objects.get(pk=record_id)
             object_to_delete.delete()
