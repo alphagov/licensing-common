@@ -2,7 +2,7 @@ from enum import StrEnum
 
 
 class PaymentProviders(StrEnum):
-    CIVICA = "CIVICA"
-    NORTHGATE = "NORTHGATE"
-    WORLDPAY = "WORLDPAY"
-    ACCESS_PAY_SUITE = "ACCESS PAYSUITE"
+    CIVICA = "Civica"
+    NORTHGATE = "Northgate"
+    WORLDPAY = "WorldPay"
+    ACCESS_PAY_SUITE = "Access PaySuite"

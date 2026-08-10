@@ -8,7 +8,7 @@ from common.models.payements import Payment, PaymentStatus
 def test_valid_payment():
     payment = Payment(
         payment_account_id="test",
-        payment_provider="WORLDPAY",
+        payment_provider="WorldPay",
         application_reference="test",
         payment_status=PaymentStatus(status=PaymentStatuses.COMPLETED),
         callback_url="https://example.com",
@@ -23,7 +23,7 @@ def test_payment_invalid_payment_status_throws_error():
     with pytest.raises(ValidationError) as e:
         payment = Payment(
             payment_account_id="test",
-            payment_provider="WORLDPAY",
+            payment_provider="WorldPay",
             application_reference="test",
             payment_status=PaymentStatus(status="invalid"),
             callback_url="https://example.com",
