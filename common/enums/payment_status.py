@@ -12,3 +12,5 @@ class PaymentStatuses(StrEnum):
     FAILED_UNKNOWN = "failedUnknownState"
     MISMATCHED = "mismatched"
     CIVICA_RETURNED = "returnedFromPaymentProvider"
+    CANCELLED = "cancelled"
+    UNKNOWN_EXPIRED = "unknownExpired"
