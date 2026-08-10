@@ -12,7 +12,7 @@ Licensing Common holds models, and logic shared across different components of t
 
 ## Mise
 
-This project uses [mise-en-place](https://mise.jdx.dev/) to provide specific versions of tools, listed in .tool-versions. You should set up mise to [activate automatically](https://mise.jdx.dev/getting-started.html#activate-mise)
+This project uses [mise-en-place](https://mise.jdx.dev/) to provide specific versions of tools, listed in .tool-versions. You should set up mise to [activate automatically](https://mise.jdx.dev/getting-started.html#activate-mise) with your shell, then run `mise install` and `mise trust`.
 
 ## UV
 
@@ -22,19 +22,9 @@ To install UV if not already present, run the following command:
 
 ### MacOS
 
-```
-brew install uv
-```
-
 Use `make sync` to create a virtual environment with all necessary dependencies and packages already resolved. This will also happen automatically when running other make commands.
 
-Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `uv` hasn't already done this for you
-
-## Direnv
-
-Get direnv to load required environment variables automatically by setting up the [direnv hook](https://direnv.net/docs/hook.html) to run when your shell starts up.
-
-You will also need to allow direnv to load environment variables from this directory with `direnv allow .`
+Activate the virtual environment by running `source .venv/bin/activate` from the root of the project if `mise` hasn't already done this for you.
 
 ## Pre-commit
 
@@ -55,16 +45,13 @@ The `make seed-db` command will attempt to seed data within the local DocumentDB
 ## Authentication Error when Connecting to New Local DocumentDB Instance
 If this is the first time you are connecting to the database, the most likely cause of authentication errors is the Docker DocumentDB image not having correct credentials created. If you have previously been able to connect this is unlikely the case.
 
-1. Make sure your terminal is in the project root and the virtual environment is active with `source .venv/bin/activate` .
-2. Check status with `direnv status`. If you see `No .envrc or .env loaded` then your direnv isn't working correctly. 
-   - Ensure all the steps in the Direnv section of the readme have been followed. 
-   - Ensure you are using a terminal that has a hook setup. Default IDE terminals may not be the terminal you expect. For example, it may open a Zsh terminal whereas your hook was on the bash terminal.
+1. Make sure your terminal is in the project root and the virtual environment is active with `source .venv/bin/activate`.
 
-3. Once direnv is working correctly, `direnv status` should log that a .envrc is being loaded via the terminal messages.
+2. Ensure all the steps under mise setup have been followed and the hook is setup in your shell startup file (e.g. `.zshrc`).
 
-4. Remove the existing DocumentDB image using docker desktop or a compose down command.
+3. Remove the existing DocumentDB image using docker desktop or a compose down command.
 
-5. Create a new one instance using 'make prepare-tests'. This should create a new DocumentDB with the expected credentials from .envrc.
+4. Create a new one instance using 'make prepare-tests'. This should create a new DocumentDB with the expected credentials from .envrc.
 
 # Licence
 
