@@ -53,8 +53,10 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
 
     # actual comparisons start here
     for doc in sample_docs:
+        real_primary_key_col = model_class._meta.pk.column
+
         # check data exists in both
-        doc_id = doc["_id"]
+        doc_id = doc[real_primary_key_col]
         try:
             django_obj = model_class.objects.get(pk=doc_id)
         except model_class.DoesNotExist:
@@ -102,17 +104,16 @@ def _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, sho
         ignore_numeric_type_changes=True,
         ignore_order=True,
     )
-
     # at this point we should have 2 identical values, whether it's basic ints or a complex nested dictionary
     # if we don't then the model does not represent the database.
     if diffs:
         for category, items in diffs.items():
             for item in items:
-                # instead of root, print the actual field name
-                printable_item = str(item).replace("root", field_name, 1)
+                # instead of root, use the actual field name
+                useable_item = str(item).replace("root", field_name, 1)
                 value_mismatches.append(
                     f"[{model_class.__name__}] model error. Doc _id: {doc_id}\n"
-                    f"  Db value does not match model value. {category} at {printable_item}"
+                    f"  Db value does not match model value. {category} at {useable_item}"
                 )
 
         # use pytest common/tests/hydration/[test_here].py -s --show-diffs for this to log
@@ -120,8 +121,8 @@ def _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, sho
         if show_diffs:
             logger.warning(doc_id)
             pretty = diffs.pretty()
-            printable_pretty = str(pretty).replace("root", field_name, 1)
-            logger.warning("Issue for document %s: \n %s", doc_id, printable_pretty)
+            useable_pretty = str(pretty).replace("root", field_name, 1)
+            logger.warning("Issue for document %s: \n %s", doc_id, useable_pretty)
 
     return value_mismatches
 
