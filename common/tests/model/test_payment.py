@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from common.enums.payment_status import PaymentStatuses
-from common.models.payements import Payment, PaymentStatus
+from common.models.payments import Payment, PaymentStatus
 
 
 def test_valid_payment():
