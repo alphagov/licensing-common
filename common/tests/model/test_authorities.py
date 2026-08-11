@@ -84,3 +84,10 @@ def test_valid_authority():
         contact_details=ContactDetails(),
     )
     authority.full_clean()
+
+
+def test_authority_id_returns_url_slug():
+    authority = Authority(
+        url_slug="test-url-slug",
+    )
+    assert authority.id == "test-url-slug"
