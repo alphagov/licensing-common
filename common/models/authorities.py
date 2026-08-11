@@ -64,3 +64,7 @@ class Authority(models.Model):
 
     def __str__(self):
         return f"{self.full_name}"
+
+    @property
+    def id(self):
+        return self.url_slug
