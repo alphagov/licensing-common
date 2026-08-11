@@ -11,6 +11,7 @@ class PaymentRecord(models.Model):
     application_reference_number = models.CharField(
         db_column="applicationRefNo", max_length=255, editable=False, primary_key=True
     )
+    provider_payment_reference = models.CharField(db_column="paymentRef", max_length=255, editable=False)
     payment_amount = EmbeddedModelField(PaymentAmount, db_column="paymentAmount")
     confirmation_time = models.DateTimeField(db_column="confirmedAt", default=now)
     confirmation_record = models.TextField(db_column="confirmationRecord")
