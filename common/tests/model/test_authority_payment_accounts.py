@@ -79,9 +79,9 @@ def test_invalid_payment_provider():
     assert expected_error_message in e.value.message_dict["payment_provider"]
 
 
-def test_authority_payment_accounts_id():
+def test_authority_payment_accounts_id_returns_url_slug():
     authority_payment_accounts = AuthorityPaymentAccounts(
-        authority_url_slug="test",
+        authority_url_slug="test-url-slug",
         payment_provider=PaymentProviders.NORTHGATE,
         accounts=[],
         merchant_id="test",
@@ -95,4 +95,4 @@ def test_authority_payment_accounts_id():
     )
     authority_payment_accounts.full_clean()
 
-    assert authority_payment_accounts.id == "test"
+    assert authority_payment_accounts.id == "test-url-slug"
