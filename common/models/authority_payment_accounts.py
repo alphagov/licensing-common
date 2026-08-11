@@ -1,9 +1,9 @@
 from django.db import models
 from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField
 from django_mongodb_backend.models import EmbeddedModel
-from models.shared_models import PaymentAccount
 
 from common.enums.payment_providers import PaymentProviders
+from common.models.shared_models import PaymentAccount
 
 
 class AccessPaySuiteAcceptedCards(EmbeddedModel):

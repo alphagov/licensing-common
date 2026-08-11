@@ -2,8 +2,9 @@ import bson
 from django.db import models
 from django.utils.timezone import now
 from django_mongodb_backend.fields import EmbeddedModelField, ObjectIdField
-from enums.payment_providers import PaymentProviders
-from models.shared_models import PaymentAccount, PaymentAmount
+
+from common.enums.payment_providers import PaymentProviders
+from common.models.shared_models import PaymentAccount, PaymentAmount
 
 
 class PaymentRecord(models.Model):
