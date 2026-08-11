@@ -13,6 +13,10 @@ class PaymentAccount(EmbeddedModel):
     provider_specific_code_D = models.CharField(db_column="codeD", max_length=255)
     account_id = ObjectIdField(db_column="acc_id", unique=True, blank=True, null=True)
 
+    @property
+    def id(self):
+        return self.account_id
+
 
 class AccessPaySuiteAcceptedCards(EmbeddedModel):
     visa = models.BooleanField(db_column="visa", default=False)
