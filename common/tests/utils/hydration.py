@@ -5,6 +5,7 @@ from bson import Decimal128, ObjectId
 from deepdiff import DeepDiff
 from django.core.exceptions import ValidationError
 from django.db import models
+from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField
 from django_mongodb_backend.models import EmbeddedModel
 from pymongo.database import Database
 
@@ -72,15 +73,11 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
             mismatches.append(f"[{model_class.__name__}] Doc _id={doc_id} missing in Django ORM.")
             continue
 
-        # forces the validation rules to run, so enum properties and custom rules that normall only occur on form fills
+        # forces the validation rules to run, so enum properties and custom rules that normally only occur on form fills
         # tests the model matches reality (or the quality of the data)
-        try:
-            django_obj.full_clean(validate_unique=False)
-        except ValidationError as e:
-            mismatches.append(
-                f"[{model_class.__name__}] Model validation error for Doc _id={doc_id}:\n"
-                f"  {e.message_dict if hasattr(e, 'message_dict') else e.messages}"
-            )
+        validation_errors = _check_cleans(django_obj, model_class)
+        for err in validation_errors:
+            mismatches.append(f"[{model_class.__name__}] Doc _id={doc_id}: {err}")
 
         # check data structure and values match
         for raw_key, raw_val in doc.items():
@@ -97,6 +94,37 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
             field_name = db_column_to_field[raw_key]
             mismatches += _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, show_diffs)
     return mismatches
+
+
+def _check_cleans(django_obj, model_class):
+    clean_errors = []
+
+    try:
+        django_obj.full_clean(validate_unique=False)
+    except ValidationError as e:
+        msg = e.message_dict if hasattr(e, "message_dict") else e.messages
+        clean_errors.append(f"Parent validation error: {msg}")
+
+    for field in model_class._meta.get_fields():
+        # If the model field holds an embedded model (single or array), validate its children
+        if isinstance(field, (EmbeddedModelField, EmbeddedModelArrayField)):
+            val = getattr(django_obj, field.name, None)
+            if not val:
+                continue
+
+            # to avoid multiple loops, make sure we also have a list even if it's not an embeddedmodelarrayfield
+            items = val if isinstance(field, EmbeddedModelArrayField) else [val]
+
+            # for each embedded item, try and clean it and collect any issues
+            for idx, item in enumerate(items):
+                if hasattr(item, "full_clean"):
+                    try:
+                        item.full_clean()
+                    except ValidationError as e:
+                        msg = e.message_dict if hasattr(e, "message_dict") else e.messages
+                        clean_errors.append(f"Embedded '{field.name}'[{idx}] error: {msg}")
+
+    return clean_errors
 
 
 def _is_django_implicit_auto_pk(field: models.Field) -> bool:

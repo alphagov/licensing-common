@@ -48,6 +48,7 @@ pytest common/tests/hydration/test_authority_payment_accounts_hydration.py -s --
 ```
 ### Options & Security Flags
 * Add `--show-diffs` to log detailed diff output in the terminal for troubleshooting data mismatches. Diff output logging is intentionally gated behind `--show-diffs` so that sensitive data (PII) is never accidentally logged during automated CI/CD runs.
+* Add `-vv` to disable Pytest output truncation and view full mismatch lists or deep tracebacks.
 
 # Data Seeding
 >  **Note:** This command requires local BSON files and is restricted to local development environments.
