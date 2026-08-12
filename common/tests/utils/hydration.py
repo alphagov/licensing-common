@@ -3,6 +3,7 @@ import warnings
 
 from bson import Decimal128, ObjectId
 from deepdiff import DeepDiff
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_mongodb_backend.models import EmbeddedModel
 from pymongo.database import Database
@@ -31,9 +32,17 @@ def verify_model_against_collection(db: Database, model_class: type[models.Model
     if actual_sample_size == 0:
         raise ValueError(f"Collection '{collection_name}' has no data")
     elif isinstance(sample_size, int) and actual_sample_size < sample_size:
-        warnings.warn(UserWarning(f"{sample_size} asked for, only {actual_sample_size} found."), stacklevel=2)
+        warnings.warn(
+            f"{sample_size} asked for, only {actual_sample_size} found.",
+            category=UserWarning,
+            stacklevel=2,
+        )
     elif actual_sample_size < 100:
-        warnings.warn(UserWarning("Less than 100 items sampled"), stacklevel=2)
+        warnings.warn(
+            "Less than 100 items sampled",
+            category=UserWarning,
+            stacklevel=2,
+        )
     mismatches = _check_for_mismatches(model_class, sample_docs, show_diffs)
     logger.info(
         "[%s] Verified %s docs in '%s'. Found %s mismatch(es).",
@@ -49,7 +58,7 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
     # make sure it returns at least an empty array for mismatches
     mismatches = []
     # create a dictionary that maps database column names to django field names
-    db_column_to_field = _map_columns_to_fields(model_class)
+    db_column_to_field = _get_explicitly_declared_columns(model_class)
 
     # actual comparisons start here
     for doc in sample_docs:
@@ -62,8 +71,23 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
         except model_class.DoesNotExist:
             mismatches.append(f"[{model_class.__name__}] Doc _id={doc_id} missing in Django ORM.")
             continue
+
+        # forces the validation rules to run, so enum properties and custom rules that normall only occur on form fills
+        # tests the model matches reality (or the quality of the data)
+        try:
+            django_obj.full_clean(validate_unique=False)
+        except ValidationError as e:
+            mismatches.append(
+                f"[{model_class.__name__}] Model validation error for Doc _id={doc_id}:\n"
+                f"  {e.message_dict if hasattr(e, 'message_dict') else e.messages}"
+            )
+
         # check data structure and values match
         for raw_key, raw_val in doc.items():
+            # if there's an _id BUT it isn't the primary key of the model AND we haven't mapped it, let's assume it's
+            # an intentional choice to leave it out
+            if raw_key == "_id" and real_primary_key_col != "_id" and "_id" not in db_column_to_field:
+                continue
             # log missing properties at the top level
             structure_mismatch = _check_data_structure(model_class, db_column_to_field, raw_key)
             if structure_mismatch is not None:
@@ -75,11 +99,16 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
     return mismatches
 
 
-def _map_columns_to_fields(model_class):
-    db_column_to_field = {}
-    for field in model_class._meta.fields:
-        db_column_to_field[field.column] = field.name
-    return db_column_to_field
+def _is_django_implicit_auto_pk(field: models.Field) -> bool:
+    """
+    Returns True ONLY if this field is Django's default auto-injected primary key.
+    """
+    return field.auto_created and field.name == "id"
+
+
+def _get_explicitly_declared_columns(model_class):
+    # basically we're trying to avoid useless django ids
+    return {field.column: field.name for field in model_class._meta.fields if not _is_django_implicit_auto_pk(field)}
 
 
 def _check_data_structure(model_class, db_column_to_field, raw_key):
@@ -174,7 +203,7 @@ def _normalise_django(val):
     if isinstance(val, EmbeddedModel):
         normalised_dict = {}
         for field in val._meta.fields:
-            if field.primary_key and field.auto_created:
+            if _is_django_implicit_auto_pk(field):
                 continue
             field_value = getattr(val, field.name)
             normalised_dict[field.column] = _normalise_django(field_value)
@@ -193,6 +222,11 @@ def _strip_django_defaults(bson_val, django_val):
     In the database, even if a field is omitted, the django model will still give it a default value of "" or none.
     """
     if isinstance(bson_val, dict) and isinstance(django_val, dict):
+        # Delete unmapped legacy BSON primary key noise ('id', '_id') if not present in normalized Django output
+        for pk_key in ("id", "_id"):
+            if pk_key in bson_val and pk_key not in django_val:
+                del bson_val[pk_key]
+
         for key in list(django_val.keys()):
             # this does assume the default value
             if key not in bson_val and django_val[key] in (None, "", [], {}):

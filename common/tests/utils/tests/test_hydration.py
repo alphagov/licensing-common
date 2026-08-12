@@ -4,7 +4,7 @@ from bson import ObjectId
 from common.tests.utils.hydration import (
     _check_data_structure,
     _check_data_values,
-    _map_columns_to_fields,
+    _get_explicitly_declared_columns,
     _strip_django_defaults,
 )
 from common.tests.utils.tests.hydration_classes_for_testing import (
@@ -18,9 +18,9 @@ from common.tests.utils.tests.hydration_classes_for_testing import (
 
 NAME = "Department of Mocks"
 NUM_EMPLOYEES = 30
-MOCK_DEPARTMENT_FIELDS = _map_columns_to_fields(MockDepartment)
-MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = _map_columns_to_fields(MockDepartmentUltraNest)
-MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = _map_columns_to_fields(MockDepartmentWithArrayList)
+MOCK_DEPARTMENT_FIELDS = _get_explicitly_declared_columns(MockDepartment)
+MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = _get_explicitly_declared_columns(MockDepartmentUltraNest)
+MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = _get_explicitly_declared_columns(MockDepartmentWithArrayList)
 
 
 @pytest.fixture
