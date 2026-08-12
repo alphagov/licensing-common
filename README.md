@@ -36,6 +36,19 @@ Ensure local database instance is running with port 27017 exposed.
 
 With an activated virtual environment run `make test` to run pytest test suite. This will create a local instance of DocumentDB, run the tests, and tear down the instance of DocumentDB
 
+## Testing Django Models Against Existing Data
+
+A test utility called `verify_model_against_collection` is available for comparing "raw" BSON documents from the database against hydrated Django models to ensure model mappings match reality. It is imported from `common.tests.utils.hydration`.
+
+An example test can be found at `common/tests/hydration/test_authority_payment_accounts_hydration.py`.
+
+To run a specific hydration test:
+```
+pytest common/tests/hydration/test_authority_payment_accounts_hydration.py -s --log-cli-level=INFO
+```
+### Options & Security Flags
+* Add `--show-diffs` to log detailed diff output in the terminal for troubleshooting data mismatches. Diff output logging is intentionally gated behind `--show-diffs` so that sensitive data (PII) is never accidentally logged during automated CI/CD runs.
+
 # Data Seeding
 >  **Note:** This command requires local BSON files and is restricted to local development environments.
 
