@@ -29,7 +29,7 @@ def mock_django(doc_id):
 
 
 @pytest.fixture
-def mock_bson(doc_id):
+def mock_pymongo_result(doc_id):
     return {"_id": doc_id, "name": NAME, "numEmployees": NUM_EMPLOYEES, "isMock": True}
 
 
@@ -51,14 +51,16 @@ def mock_department_ultra_nest(doc_id):
     )
 
 
-def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismatches(mock_bson, mock_django, doc_id):
+def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismatches(
+    mock_pymongo_result, mock_django, doc_id
+):
     """
-    Test a Django model that matches a BSON model doesn't find false mismatches.
+    Test a Django model that matches a document model doesn't find false mismatches.
 
     A little overloaded as it's technically testing structure code, and multiple primitive matches, but it's
     offsetting all the unhappy path tests below
     """
-    for raw_key, raw_val in mock_bson.items():
+    for raw_key, raw_val in mock_pymongo_result.items():
         assert (
             _check_data_structure(
                 model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=raw_key
@@ -80,7 +82,7 @@ def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismat
 
 def test_check_data_structure_detects_missing_column():
     """
-    Test check_data_structure() correctly finds cases where BSON has extra columns compared to the django model.
+    Test check_data_structure() correctly finds cases where the document has extra columns compared to the django model.
 
     This functionality catches missed mappings (or bad data).
     """
@@ -94,7 +96,7 @@ def test_check_data_structure_detects_missing_column():
 
 def test_check_data_values_detects_value_mismatch(mock_django, doc_id):
     """
-    Test check_data_values() correctly finds cases where the bson value and the django value don't match.
+    Test check_data_values() correctly finds cases where the documents value and the django value don't match.
     """
     mismatches = _check_data_values(
         model_class=MockDepartment,
@@ -143,16 +145,18 @@ def test_check_data_values_detects_value_type_mismatch(mock_django, doc_id):
     assert "num_of_employees" in mismatches[0]
 
 
-def test_nested_bson_values_can_match_embedded_models(mock_bson, doc_id, mock_department_ultra_nest):
+def test_nested_pymongo_result_values_can_match_embedded_models(
+    mock_pymongo_result, doc_id, mock_department_ultra_nest
+):
     """
-    Test bson embedded documents that match django models with embedded models cause no mismatches.
+    Test documents with embedded documents that match django models with embedded models cause no mismatches.
 
     A little overloaded as it's technically testing structure code and value code, but it's offsetting all the unhappy
     path tests below
     """
 
-    mock_bson["nestOne"] = {"nestTwo": {"mockNestWithValue": {"actualVal": 2}}}
-    for raw_key, raw_val in mock_bson.items():
+    mock_pymongo_result["nestOne"] = {"nestTwo": {"mockNestWithValue": {"actualVal": 2}}}
+    for raw_key, raw_val in mock_pymongo_result.items():
         assert (
             _check_data_structure(
                 model_class=MockDepartmentUltraNest,
@@ -174,15 +178,15 @@ def test_nested_bson_values_can_match_embedded_models(mock_bson, doc_id, mock_de
         )
 
 
-def test_nested_bson_value_mismatches_detectable(mock_bson, doc_id, mock_department_ultra_nest):
+def test_nested_pymongo_result_value_mismatches_detectable(mock_pymongo_result, doc_id, mock_department_ultra_nest):
     """
     Test that mismatches can be found even if the mismatch is deeply embedded.
 
     This does depend on test_check_data_values_detects_value_type_mismatch() passing to be useful data
     """
-    mock_bson["nestOne"] = {"nestTwo": {"mockNestWithValue": {"actualVal": "2"}}}
+    mock_pymongo_result["nestOne"] = {"nestTwo": {"mockNestWithValue": {"actualVal": "2"}}}
     mismatches = []
-    for raw_key, raw_val in mock_bson.items():
+    for raw_key, raw_val in mock_pymongo_result.items():
         field_name = MOCK_DEPARTMENT_ULTRA_NEST_FIELDS[raw_key]
         mismatches += _check_data_values(
             model_class=MockDepartmentUltraNest,
@@ -200,15 +204,15 @@ def test_strip_django_defaults_removes_irrelevant_defaults():
     """
     Test that strip_django_defaults() removes irrelevant defaults.
 
-    Bson can omit columns entirely. Django models can't sanely omit the existence of a property so instead it has a
+    Documents can omit columns entirely. Django models can't sanely omit the existence of a property so instead it has a
     default value for those properties. When comparing data, however, we don't want to falsely flag the difference
     when the database has literally nothing and Django has "". That's a limitation of mapping nosql in Django that
     can't be easily solved.
     """
-    bson_data = {}
+    pymongo_result_data = {}
     django_data = {"displayTitle": "", "defaultDeclarations": []}
 
-    _strip_django_defaults(bson_data, django_data)
+    _strip_django_defaults(pymongo_result_data, django_data)
 
     # should remove sparse keys from django_data so no diff is raised
     assert django_data == {}
@@ -219,11 +223,11 @@ def test_strip_django_defaults_doesnt_remove_mismatched_defaults():
     Test strip_django_defaults() doesn't remove genuine mismatches when the db has values and the Django model has
     not been hydrated correctly.
     """
-    bson_data = {"form": {"name": "Street Form", "version": 1}}
+    pymongo_result_data = {"form": {"name": "Street Form", "version": 1}}
     django_data = {"form": {}}
 
-    # shouldn't remove that form because bson data exists so it's a proper mismatch
-    _strip_django_defaults(bson_data, django_data)
+    # shouldn't remove that form because document data exists so it's a proper mismatch
+    _strip_django_defaults(pymongo_result_data, django_data)
 
     assert "form" in django_data
     assert django_data["form"] == {}
@@ -235,7 +239,7 @@ def test_check_data_values_detects_data_loss_on_embedded_model(doc_id, mock_depa
     hydrate child fields.
     """
     # 1. MongoDB has populated nested data for 'nestOne'
-    raw_bson_val = {"nestTwo": {"mockNestWithValue": {"actualVal": 42}}}
+    raw_pymongo_result_val = {"nestTwo": {"mockNestWithValue": {"actualVal": 42}}}
 
     # Django model has nest_one initialized but child data didn't hydrate
     django_obj = MockDepartmentUltraNest(nest_one=MockNest1())
@@ -244,7 +248,7 @@ def test_check_data_values_detects_data_loss_on_embedded_model(doc_id, mock_depa
     mismatches = _check_data_values(
         model_class=MockDepartmentUltraNest,
         field_name="nest_one",
-        raw_val=raw_bson_val,
+        raw_val=raw_pymongo_result_val,
         doc_id=doc_id,
         django_obj=django_obj,
     )
@@ -258,7 +262,7 @@ def test_check_data_values_ignores_matching_arrays(doc_id):
     """
     Test check_data_values ignores when arrays match correctly.
     """
-    array_list_bson = [
+    array_list_pymongo_result = [
         {"actualVal": "one"},
         {"actualVal": "two"},
     ]
@@ -271,7 +275,7 @@ def test_check_data_values_ignores_matching_arrays(doc_id):
     mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
-        raw_val=array_list_bson,
+        raw_val=array_list_pymongo_result,
         doc_id=doc_id,
         django_obj=django_obj,
     )
@@ -282,8 +286,8 @@ def test_check_data_values_detects_array_length_mismatch():
     """
     Test check_data_values() correctly detects when an array is missing an item.
     """
-    # 3 bson items
-    array_list_bson = [
+    # 3  items in pymongo result
+    array_list_pymongo_result = [
         {"actualVal": "one"},
         {"actualVal": "two"},
         {"actualVal": "three"},
@@ -297,7 +301,7 @@ def test_check_data_values_detects_array_length_mismatch():
     mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
-        raw_val=array_list_bson,
+        raw_val=array_list_pymongo_result,
         doc_id="mock_id_array_test",
         django_obj=django_obj,
     )
@@ -309,7 +313,7 @@ def test_check_data_values_detects_item_value_mismatch_inside_array(doc_id):
     """
     Test check_data_values() detects when arrays are the same length but don't contain the same data
     """
-    array_list_bson = [{"actualVal": "one"}, {"actualVal": "wrong_value"}]
+    array_list_pymongo_result = [{"actualVal": "one"}, {"actualVal": "wrong_value"}]
     django_obj = MockDepartmentWithArrayList(
         array_list=[MockNestWithValue(actual_val="one"), MockNestWithValue(actual_val="two")]
     )
@@ -318,7 +322,7 @@ def test_check_data_values_detects_item_value_mismatch_inside_array(doc_id):
     mismatches = _check_data_values(
         model_class=MockDepartmentWithArrayList,
         field_name=field_name,
-        raw_val=array_list_bson,
+        raw_val=array_list_pymongo_result,
         doc_id=doc_id,
         django_obj=django_obj,
     )
@@ -335,7 +339,7 @@ def test_check_data_values_detects_missing_nested_properties(doc_id, mock_depart
     Check_data_structure() guards against unmapped top-level document columns, check_data_values() relies on DeepDiff
     to recursively inspect embedded models and flag missing keys that are nested lower down.
     """
-    nested_bson_val = {
+    nested_pymongo_result_val = {
         "nestTwo": {
             "mockNestWithValue": {
                 "actualVal": 2,
@@ -347,7 +351,7 @@ def test_check_data_values_detects_missing_nested_properties(doc_id, mock_depart
     mismatches = _check_data_values(
         model_class=MockDepartmentUltraNest,
         field_name="nest_one",
-        raw_val=nested_bson_val,
+        raw_val=nested_pymongo_result_val,
         doc_id=doc_id,
         django_obj=mock_department_ultra_nest,
     )

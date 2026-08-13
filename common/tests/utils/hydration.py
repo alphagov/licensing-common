@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def verify_model_against_collection(db: Database, model_class: type[models.Model], sample_size=None, show_diffs=False):
     """
-    This function compares actual BSON documents from the database with a django model and reports any issues.
+    This function compares actual documents from the database (via pymongo)  with a django model and reports any issues.
 
     The aim is to see if the model is missing columns, has incompatibility errors,  or not hydrating correctly. It
     compares documents to the model by using pymongo to pull "raw" data and using django to hydrate the equivalent
@@ -151,12 +151,12 @@ def _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, sho
 
     # to compare we need common ground, normalising the data gets both in a comparable format such as ints, or
     # a dictionary, etc,  and handles known data type quirks
-    normalised_bson = _normalise_bson(raw_val)
+    normalised_pymongo_result = normalise_pymongo_result(raw_val)
     normalised_django = _normalise_django(django_val)
-    _strip_django_defaults(normalised_bson, normalised_django)
 
+    _strip_django_defaults(normalised_pymongo_result, normalised_django)
     diffs = DeepDiff(
-        normalised_bson,
+        normalised_pymongo_result,
         normalised_django,
         ignore_numeric_type_changes=True,
         ignore_order=True,
@@ -207,15 +207,15 @@ def _normalise_common(val, normaliser_fn):
     return val
 
 
-def _normalise_bson(val):
+def normalise_pymongo_result(val):
     """
-    Ensures bson data convert to predictable/standard data types before common cleaning tasks
+    Ensures pymongo results  convert to predictable/standard data types. Then passes to generic normalising function.
     """
     # weird decimal mismatch  make it a normal decimal
     if isinstance(val, Decimal128):
         return val.to_decimal()
 
-    return _normalise_common(val, _normalise_bson)
+    return _normalise_common(val, normalise_pymongo_result)
 
 
 def _normalise_django(val):
@@ -244,26 +244,27 @@ def _normalise_django(val):
     return _normalise_common(val, _normalise_django)
 
 
-def _strip_django_defaults(bson_val, django_val):
+def _strip_django_defaults(normalised_pymongo_result_val, django_val):
     """
     This removes false positives for data mismatches.
     In the database, even if a field is omitted, the django model will still give it a default value of "" or none.
     """
-    if isinstance(bson_val, dict) and isinstance(django_val, dict):
-        # Delete unmapped legacy BSON primary key noise ('id', '_id') if not present in normalized Django output
+    if isinstance(normalised_pymongo_result_val, dict) and isinstance(django_val, dict):
+        # Delete unmapped legacy primary key noise from pymongo result ('id', '_id') if not present in normalized Django
+        # output
         for pk_key in ("id", "_id"):
-            if pk_key in bson_val and pk_key not in django_val:
-                del bson_val[pk_key]
+            if pk_key in normalised_pymongo_result_val and pk_key not in django_val:
+                del normalised_pymongo_result_val[pk_key]
 
         for key in list(django_val.keys()):
             # this does assume the default value
-            if key not in bson_val and django_val[key] in (None, "", [], {}):
+            if key not in normalised_pymongo_result_val and django_val[key] in (None, "", [], {}):
                 del django_val[key]
             # recurse in case it's an embedded model that needs fixing
-            elif key in bson_val:
-                _strip_django_defaults(bson_val[key], django_val[key])
+            elif key in normalised_pymongo_result_val:
+                _strip_django_defaults(normalised_pymongo_result_val[key], django_val[key])
 
     # if it's an array of documents/models we need to recurse until it's removed all false positives
-    elif isinstance(bson_val, list) and isinstance(django_val, list):
-        for bson_doc, django_model in zip(bson_val, django_val, strict=False):
-            _strip_django_defaults(bson_doc, django_model)
+    elif isinstance(normalised_pymongo_result_val, list) and isinstance(django_val, list):
+        for normalised_pymongo_result_doc, django_model in zip(normalised_pymongo_result_val, django_val, strict=False):
+            _strip_django_defaults(normalised_pymongo_result_doc, django_model)
