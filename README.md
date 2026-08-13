@@ -38,13 +38,11 @@ With an activated virtual environment run `make test` to run pytest test suite. 
 
 ## Testing Django Models Against Existing Data
 
-A test utility called `verify_model_against_collection` is available for comparing "raw" BSON documents from the database against hydrated Django models to ensure model mappings match reality. It is imported from `common.tests.utils.hydration`.
+A test utility called `verify_model_against_collection` is available for comparing "raw" documents from the database against hydrated Django models to ensure model mappings match reality. The models are tested as part of a parameterised test in `test_model_hydration_and_data_integrity.py`.
 
-An example test can be found at `common/tests/hydration/test_authority_payment_accounts_hydration.py`.
-
-To run a specific hydration test:
+To run the tests remove the skip fixture and use the following command:
 ```
-pytest common/tests/hydration/test_authority_payment_accounts_hydration.py -s --log-cli-level=INFO
+pytest common/tests/hydration/test_model_hydration_and_data_integrity.py --log-cli-level=INFO
 ```
 ### Options & Security Flags
 * Add `--show-diffs` to log detailed diff output in the terminal for troubleshooting data mismatches. Diff output logging is intentionally gated behind `--show-diffs` so that sensitive data (PII) is never accidentally logged during automated CI/CD runs.
