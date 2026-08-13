@@ -8,9 +8,9 @@ from common.models.shared_models import PaymentAccount, PaymentAmount
 
 
 class PaymentRecord(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, auto_created=True, editable=False)
+    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
     application_reference_number = models.CharField(
-        db_column="applicationRefNo", max_length=255, editable=False, primary_key=True
+        db_column="applicationRefNo", max_length=255, editable=False, unique=True
     )
     provider_payment_reference = models.CharField(db_column="paymentRef", max_length=255, editable=False)
     payment_amount = EmbeddedModelField(PaymentAmount, db_column="paymentAmount")
