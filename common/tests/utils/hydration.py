@@ -16,7 +16,7 @@ def verify_model_against_collection(db: Database, model_class: type[models.Model
     """
     This function compares actual documents from the database (via pymongo)  with a django model and reports any issues.
 
-    The aim is to see if the model is missing columns, has incompatibility errors,  or not hydrating correctly. It
+    The aim is to see if the model is missing attributes, has incompatibility errors,  or not hydrating correctly. It
     compares documents to the model by using pymongo to pull "raw" data and using django to hydrate the equivalent
     model. It then converts both to dictionaries and compares the keys and values directly.
 
@@ -58,8 +58,8 @@ def verify_model_against_collection(db: Database, model_class: type[models.Model
 def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_diffs=False):
     # make sure it returns at least an empty array for mismatches
     mismatches = []
-    # create a dictionary that maps database column names to django field names
-    db_column_to_field = _get_explicitly_declared_columns(model_class)
+    # create a dictionary that maps database attribute names to django field names
+    db_attribute_to_field = _get_explicitly_declared_attributes(model_class)
 
     # actual comparisons start here
     for doc in sample_docs:
@@ -83,15 +83,15 @@ def _check_for_mismatches(model_class: type[models.Model], sample_docs, show_dif
         for raw_key, raw_val in doc.items():
             # if there's an _id BUT it isn't the primary key of the model AND we haven't mapped it, let's assume it's
             # an intentional choice to leave it out
-            if raw_key == "_id" and real_primary_key_col != "_id" and "_id" not in db_column_to_field:
+            if raw_key == "_id" and real_primary_key_col != "_id" and "_id" not in db_attribute_to_field:
                 continue
             # log missing properties at the top level
-            structure_mismatch = _check_data_structure(model_class, db_column_to_field, raw_key)
+            structure_mismatch = _check_data_structure(model_class, db_attribute_to_field, raw_key)
             if structure_mismatch is not None:
                 mismatches.append(structure_mismatch)
                 continue
             # if the structure is fine, check values
-            field_name = db_column_to_field[raw_key]
+            field_name = db_attribute_to_field[raw_key]
             mismatches += _check_data_values(model_class, field_name, raw_val, doc_id, django_obj, show_diffs)
     return mismatches
 
@@ -134,13 +134,13 @@ def _is_django_implicit_auto_pk(field: models.Field) -> bool:
     return field.auto_created and field.name == "id"
 
 
-def _get_explicitly_declared_columns(model_class):
+def _get_explicitly_declared_attributes(model_class):
     # basically we're trying to avoid useless django ids
     return {field.column: field.name for field in model_class._meta.fields if not _is_django_implicit_auto_pk(field)}
 
 
-def _check_data_structure(model_class, db_column_to_field, raw_key):
-    if raw_key not in db_column_to_field:
+def _check_data_structure(model_class, db_attribute_to_field, raw_key):
+    if raw_key not in db_attribute_to_field:
         return f"[{model_class.__name__}] Key '{raw_key}' in DB missing from Django model."
     return None
 

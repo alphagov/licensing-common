@@ -4,7 +4,7 @@ from bson import ObjectId
 from common.tests.utils.hydration import (
     _check_data_structure,
     _check_data_values,
-    _get_explicitly_declared_columns,
+    _get_explicitly_declared_attributes,
     _strip_django_defaults,
 )
 from common.tests.utils.tests.hydration_classes_for_testing import (
@@ -18,9 +18,9 @@ from common.tests.utils.tests.hydration_classes_for_testing import (
 
 NAME = "Department of Mocks"
 NUM_EMPLOYEES = 30
-MOCK_DEPARTMENT_FIELDS = _get_explicitly_declared_columns(MockDepartment)
-MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = _get_explicitly_declared_columns(MockDepartmentUltraNest)
-MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = _get_explicitly_declared_columns(MockDepartmentWithArrayList)
+MOCK_DEPARTMENT_FIELDS = _get_explicitly_declared_attributes(MockDepartment)
+MOCK_DEPARTMENT_ULTRA_NEST_FIELDS = _get_explicitly_declared_attributes(MockDepartmentUltraNest)
+MOCK_DEPARTMENT_WITH_ARRAY_LIST_FIELDS = _get_explicitly_declared_attributes(MockDepartmentWithArrayList)
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismat
     for raw_key, raw_val in mock_pymongo_result.items():
         assert (
             _check_data_structure(
-                model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=raw_key
+                model_class=MockDepartment, db_attribute_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=raw_key
             )
             is None
         )
@@ -80,17 +80,18 @@ def test_unnested_document_of_primitives_and_matching_django_model_has_no_mismat
         )
 
 
-def test_check_data_structure_detects_missing_column():
+def test_check_data_structure_detects_missing_attribute():
     """
-    Test check_data_structure() correctly finds cases where the document has extra columns compared to the django model.
+    Test check_data_structure() correctly finds cases where the document has extra attributes compared to the django
+    model.
 
     This functionality catches missed mappings (or bad data).
     """
-    extra_column = "extra_column"
+    extra_attribute = "extra_attribute"
     mismatch = _check_data_structure(
-        model_class=MockDepartment, db_column_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=extra_column
+        model_class=MockDepartment, db_attribute_to_field=MOCK_DEPARTMENT_FIELDS, raw_key=extra_attribute
     )
-    assert extra_column in mismatch
+    assert extra_attribute in mismatch
     assert "missing" in mismatch
 
 
@@ -160,7 +161,7 @@ def test_nested_pymongo_result_values_can_match_embedded_models(
         assert (
             _check_data_structure(
                 model_class=MockDepartmentUltraNest,
-                db_column_to_field=MOCK_DEPARTMENT_ULTRA_NEST_FIELDS,
+                db_attribute_to_field=MOCK_DEPARTMENT_ULTRA_NEST_FIELDS,
                 raw_key=raw_key,
             )
             is None
@@ -204,7 +205,7 @@ def test_strip_django_defaults_removes_irrelevant_defaults():
     """
     Test that strip_django_defaults() removes irrelevant defaults.
 
-    Documents can omit columns entirely. Django models can't sanely omit the existence of a property so instead it has a
+    Documents can omit attributes entirely. Django models can't omit the existence of a property so instead it has a
     default value for those properties. When comparing data, however, we don't want to falsely flag the difference
     when the database has literally nothing and Django has "". That's a limitation of mapping nosql in Django that
     can't be easily solved.
@@ -336,7 +337,7 @@ def test_check_data_values_detects_missing_nested_properties(doc_id, mock_depart
     """
     Test check_data_values() detects missing sub-properties inside nested models.
 
-    Check_data_structure() guards against unmapped top-level document columns, check_data_values() relies on DeepDiff
+    Check_data_structure() guards against unmapped top-level document attributes, check_data_values() relies on DeepDiff
     to recursively inspect embedded models and flag missing keys that are nested lower down.
     """
     nested_pymongo_result_val = {
