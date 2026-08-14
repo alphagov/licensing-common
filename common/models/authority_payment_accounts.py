@@ -1,17 +1,9 @@
 from django.db import models
-from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
+from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.payment_providers import PaymentProviders
-
-
-class PaymentAccount(EmbeddedModel):
-    name = models.CharField(db_column="name", max_length=255)
-    provider_specific_code_A = models.CharField(db_column="codeA", max_length=255)
-    provider_specific_code_B = models.CharField(db_column="codeB", max_length=255)
-    provider_specific_code_C = models.CharField(db_column="codeC", max_length=255)
-    provider_specific_code_D = models.CharField(db_column="codeD", max_length=255)
-    account_id = ObjectIdField(db_column="acc_id", unique=True, blank=True, null=True)
+from common.models.shared_models import PaymentAccount
 
 
 class AccessPaySuiteAcceptedCards(EmbeddedModel):
