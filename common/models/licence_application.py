@@ -13,7 +13,7 @@ class SupportingDocument(EmbeddedModel):
     file_name = models.CharField(db_column="filename", max_length=255, blank=True)
     stream = models.BinaryField(null=True, blank=True)
     definition = EmbeddedModelField(SupportingDocumentDefinition)
-    _id = ObjectIdField(db_column="_id")
+    _id = models.CharField(db_column="_id", max_length=255)
     virus_check_status = models.CharField(
         db_column="virusCheckStatus",
         max_length=255,
