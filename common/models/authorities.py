@@ -1,5 +1,6 @@
+import bson
 from django.db import models
-from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField
+from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.countries import Countries
@@ -24,7 +25,8 @@ class ContactDetails(EmbeddedModel):
 
 
 class Authority(models.Model):
-    url_slug = models.SlugField(db_column="urlSlug", max_length=255, unique=True, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    url_slug = models.SlugField(db_column="urlSlug", max_length=255, unique=True)
     name = models.CharField(max_length=255)
     agency_id = models.IntegerField(db_column="agencyId")
     full_name = models.CharField(db_column="fullName", max_length=255)

@@ -1,6 +1,7 @@
+import bson
 from django.core.exceptions import ValidationError
 from django.db import models
-from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField
+from django_mongodb_backend.fields import ArrayField, EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.countries import Countries, CountryCodes
@@ -72,7 +73,8 @@ class LicenceInteraction(EmbeddedModel):
 
 
 class Licence(models.Model):
-    licence_code = models.CharField(db_column="licenceCode", max_length=255, unique=True, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    licence_code = models.CharField(db_column="licenceCode", max_length=255, unique=True)
     name = models.CharField(max_length=255, default="")
     legislation_name = ArrayField(models.CharField(max_length=255), db_column="legislationName")
     url_slug = models.SlugField(max_length=255, db_column="urlSlug")
