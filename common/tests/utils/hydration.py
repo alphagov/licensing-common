@@ -64,14 +64,16 @@ def _get_mismatches(model_class: type[models.Model], sample_docs, show_diffs=Fal
     real_primary_key_col = model_class._meta.pk.column
 
     for doc in sample_docs:
-        doc_id = doc[real_primary_key_col]
+        displayable_doc_id = doc.get(real_primary_key_col) if show_diffs else doc.get("_id")
         try:
-            django_obj = model_class.objects.get(pk=doc_id)
+            django_obj = model_class.objects.get(pk=doc.get(real_primary_key_col))
         except model_class.DoesNotExist:
-            mismatches.append(f"[{model_class.__name__}] Doc _id={doc_id} missing in Django ORM.")
+            mismatches.append(f"[{model_class.__name__}] Doc _id={displayable_doc_id} missing in Django ORM.")
             continue
 
-        mismatches.extend(f"[{model_class.__name__}] Doc _id={doc_id}: {err}" for err in _get_clean_errors(django_obj))
+        mismatches.extend(
+            f"[{model_class.__name__}] Doc _id={displayable_doc_id}: {err}" for err in _get_clean_errors(django_obj)
+        )
 
         for raw_attribute_key, raw_val in doc.items():
             # if there's an _id BUT we chose to use a different primary key, let's assume that exclusion is intended
@@ -91,7 +93,9 @@ def _get_mismatches(model_class: type[models.Model], sample_docs, show_diffs=Fal
                 continue
 
             field_name = db_attribute_to_django_field_dictionary[raw_attribute_key]
-            mismatches.extend(_get_data_value_errors(model_class, field_name, raw_val, doc_id, django_obj, show_diffs))
+            mismatches.extend(
+                _get_data_value_errors(model_class, field_name, raw_val, displayable_doc_id, django_obj, show_diffs)
+            )
     return mismatches
 
 
