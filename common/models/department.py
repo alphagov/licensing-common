@@ -4,7 +4,7 @@ from django_mongodb_backend.fields import ObjectIdField
 
 
 class Department(models.Model):
-    _id = ObjectIdField(primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)
+    _id = ObjectIdField(default=bson.ObjectId, auto_created=True, editable=False, primary_key=True)
     authority_slug = models.CharField(default="", max_length=255, blank=True, db_column="authoritySlug")
     name = models.CharField(default="", max_length=255, blank=True, db_column="name")
     helpline_phone_number = models.CharField(default="", max_length=255, blank=True, db_column="helpPhone")
