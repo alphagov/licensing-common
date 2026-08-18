@@ -80,7 +80,7 @@ class Licence(models.Model):
     url_slug = models.SlugField(max_length=255, db_column="urlSlug")
     local_government_service_list_id = models.IntegerField(
         db_column="lgslId"
-    )  # There exists a csv with these noted down that we could validate against..
+    )  # There exists a csv with these noted down that we could validate against.
     administrative_area = EmbeddedModelField(
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea()
     )
