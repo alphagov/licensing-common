@@ -23,3 +23,7 @@ class Eula(models.Model):
 
     def __str__(self):
         return f"{self.version}"
+
+    @property
+    def id(self):
+        return self.version
