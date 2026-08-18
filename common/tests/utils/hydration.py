@@ -33,7 +33,7 @@ def verify_model_against_collection(db: Database, model_class: type[models.Model
     if actual_sample_size == 0:
         raise ValueError(f"Collection '{collection_name}' has no data")
     else:
-        if isinstance(sample_size, int) and actual_sample_size < sample_size:
+        if actual_sample_size < sample_size:
             warnings.warn(
                 f"{sample_size} asked for, only {actual_sample_size} found.",
                 category=UserWarning,
@@ -100,15 +100,18 @@ def _get_mismatches(model_class: type[models.Model], sample_docs, show_diffs=Fal
 
 
 def _get_clean_errors(django_obj):
-    clean_errors = []
-
     try:
         django_obj.full_clean(validate_unique=False)
+        return []
     except ValidationError as e:
-        msg = e.message_dict if hasattr(e, "message_dict") else e.messages
-        clean_errors.append(f"Parent validation error: {msg}")
-
-    return clean_errors
+        custom_clean_field_validation_identifier = "__all__"
+        return [
+            (
+                f"Validation error on '{'model' if field == custom_clean_field_validation_identifier else field}': "
+                f"{', '.join(msgs)}"
+            )
+            for field, msgs in e.message_dict.items()
+        ]
 
 
 def _is_django_implicit_auto_pk(field: models.Field) -> bool:

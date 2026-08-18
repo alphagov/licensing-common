@@ -105,7 +105,6 @@ def test_get_data_value_errors_detects_none_vs_value_mismatch(mock_django, doc_i
     Test get_data_value_errors() can detect errors where db is null and django is specifying a non-standard default
     value instead of "" or None.
     """
-    # DB has null, Django hydrated a default string
     mismatches = _get_data_value_errors(
         model_class=MockDepartment, field_name="name", raw_val=None, doc_id=doc_id, django_obj=mock_django
     )
@@ -187,7 +186,6 @@ def test_strip_django_defaults_removes_irrelevant_defaults():
 
     _strip_django_defaults(pymongo_result_data, django_data)
 
-    # should remove sparse keys from django_data so no diff is raised
     assert django_data == {}
 
 
