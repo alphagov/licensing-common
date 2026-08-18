@@ -1,5 +1,6 @@
+import bson
 from django.db import models
-from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField
+from django_mongodb_backend.fields import EmbeddedModelArrayField, EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.payment_providers import PaymentProviders
@@ -16,7 +17,8 @@ class AccessPaySuiteAcceptedCards(EmbeddedModel):
 
 
 class AuthorityPaymentAccounts(models.Model):
-    authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
+    authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True)
     payment_provider = models.CharField(
         db_column="paymentProvider",
         max_length=255,

@@ -116,3 +116,10 @@ def test_cleanup_of_updated_model(db_tracker, db_cleanup):
 
     db_tracker.register_created(authority._id)
     db_cleanup(model=Authority, created_ids=db_tracker.created_ids)
+
+
+def test_authority_id_returns_url_slug():
+    authority = Authority(
+        url_slug="test-url-slug",
+    )
+    assert authority.id == "test-url-slug"
