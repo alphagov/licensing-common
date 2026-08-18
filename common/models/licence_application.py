@@ -43,7 +43,7 @@ class ApplicationStatus(EmbeddedModel):
 
 
 class LicenceApplication(models.Model):
-    _id = ObjectIdField(db_column="_id", default=bson.ObjectId, auto_created=True, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
     applicant_email = models.EmailField(db_column="applicantEmail", default="", max_length=255, blank=True)
     authority = models.CharField(db_column="authority", max_length=255, default="", blank=True)
     licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)

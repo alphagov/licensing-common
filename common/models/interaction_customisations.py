@@ -38,7 +38,7 @@ class Customisation(EmbeddedModel):
 
 
 class InteractionCustomisation(models.Model):
-    _id = ObjectIdField(db_column="_id", default=bson.ObjectId, primary_key=True, editable=False)
+    _id = ObjectIdField(default=bson.ObjectId, primary_key=True, editable=False)
     authority_slug_url = models.CharField(db_column="authoritySlugUrl", max_length=255)
     licence_code = models.CharField(db_column="licenseCode", max_length=255)
     interaction_id = models.IntegerField(
