@@ -25,7 +25,7 @@ class ContactDetails(EmbeddedModel):
 
 
 class Authority(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     url_slug = models.SlugField(db_column="urlSlug", max_length=255, unique=True)
     name = models.CharField(max_length=255)
     agency_id = models.IntegerField(db_column="agencyId")

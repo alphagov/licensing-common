@@ -18,7 +18,7 @@ class PaymentStatus(EmbeddedModel):
 
 
 class Payment(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     payment_id = models.CharField(db_column="id", default=lambda: str(bson.ObjectId()), editable=False)
     application_reference = models.CharField(db_column="applicationReference", max_length=255, default="")
     amount = EmbeddedModelField(PaymentAmount, default=PaymentAmount)

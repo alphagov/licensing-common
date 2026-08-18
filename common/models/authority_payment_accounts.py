@@ -17,7 +17,7 @@ class AccessPaySuiteAcceptedCards(EmbeddedModel):
 
 
 class AuthorityPaymentAccounts(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True)
     payment_provider = models.CharField(
         db_column="paymentProvider",

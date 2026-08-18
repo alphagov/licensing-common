@@ -11,7 +11,7 @@ class EulaAcceptances(EmbeddedModel):
 
 
 class Eula(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     version = models.CharField(max_length=255, editable=False, unique=True)
     valid_from = models.DateTimeField(db_column="validFrom", default=timezone.now)
     html_text = models.TextField(db_column="htmlText")
