@@ -1,7 +1,7 @@
 import bson
 from django.db import models
 from django.utils.timezone import now
-from django_mongodb_backend.fields import EmbeddedModelField
+from django_mongodb_backend.fields import EmbeddedModelField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 from common.enums.payment_providers import PaymentProviders
@@ -18,9 +18,8 @@ class PaymentStatus(EmbeddedModel):
 
 
 class Payment(models.Model):
-    payment_id = models.CharField(
-        db_column="id", primary_key=True, default=lambda: str(bson.ObjectId()), editable=False
-    )
+    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    payment_id = models.CharField(db_column="id", default=lambda: str(bson.ObjectId()), editable=False)
     application_reference = models.CharField(db_column="applicationReference", max_length=255, default="")
     amount = EmbeddedModelField(PaymentAmount, default=PaymentAmount)
     payment_account_id = models.CharField(db_column="paymentAccountId", max_length=255)
