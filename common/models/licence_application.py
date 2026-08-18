@@ -49,7 +49,7 @@ class LicenceApplication(models.Model):
     licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)
     has_supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
     application_pdf = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
-    licence_code = models.CharField(db_column="licenseCode", max_length=255)
+    licence_code = models.CharField(db_column="licenceCode", max_length=255)
     interaction_id = models.IntegerField(
         db_column="lgilId",
         choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
