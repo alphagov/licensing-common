@@ -53,15 +53,15 @@ class LicenceInteraction(EmbeddedModel):
     licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
     display_title = models.CharField(max_length=255, db_column="displayTitle", blank=True, default="")
     form = EmbeddedModelField(LicenceForm, blank=True, null=True)
-    sub_forms = EmbeddedModelArrayField(LicenceForm, db_column="subForms", blank=True, default=[])
+    sub_forms = EmbeddedModelArrayField(LicenceForm, db_column="subForms", blank=True, default=list)
     supporting_documents = EmbeddedModelArrayField(
-        SupportingDocumentDefinition, db_column="supportingDocuments", default=[], blank=True
+        SupportingDocumentDefinition, db_column="supportingDocuments", default=list, blank=True
     )
     fee = EmbeddedModelField(PaymentAmount, blank=True, default=PaymentAmount())
     fee_calculation_instructions = ArrayField(
         models.TextField(), blank=True, default=[], db_column="feeCalculationInstructions"
     )
-    default_declarations = ArrayField(models.TextField(), blank=True, default=[], db_column="defaultDeclarations")
+    default_declarations = ArrayField(models.TextField(), blank=True, default=list, db_column="defaultDeclarations")
     tacit_consent = models.CharField(
         db_column="tacitConsent",
         max_length=255,
@@ -85,7 +85,7 @@ class Licence(models.Model):
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea()
     )
     is_offered_by_county = models.BooleanField(default=False, db_column="offeredByCounty")
-    licence_interactions = EmbeddedModelArrayField(LicenceInteraction, db_column="interactions", default=[])
+    licence_interactions = EmbeddedModelArrayField(LicenceInteraction, db_column="interactions", default=list)
 
     class Meta:
         db_table = "elmsLicences"
