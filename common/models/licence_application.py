@@ -13,7 +13,7 @@ class SupportingDocument(EmbeddedModel):
     file_name = models.CharField(db_column="filename", max_length=255, blank=True)
     stream = models.BinaryField(null=True, blank=True)
     definition = EmbeddedModelField(SupportingDocumentDefinition)
-    _id = ObjectIdField(db_column="_id")
+    _id = models.CharField(db_column="_id", max_length=255)
     virus_check_status = models.CharField(
         db_column="virusCheckStatus",
         max_length=255,
@@ -43,13 +43,13 @@ class ApplicationStatus(EmbeddedModel):
 
 
 class LicenceApplication(models.Model):
-    _id = ObjectIdField(db_column="_id", primary_key=True, default=bson.ObjectId, auto_created=True, editable=False)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     applicant_email = models.EmailField(db_column="applicantEmail", default="", max_length=255, blank=True)
     authority = models.CharField(db_column="authority", max_length=255, default="", blank=True)
     licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)
     has_supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
     application_pdf = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
-    licence_code = models.CharField(db_column="licenseCode", max_length=255)
+    licence_code = models.CharField(db_column="licenceCode", max_length=255)
     interaction_id = models.IntegerField(
         db_column="lgilId",
         choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
