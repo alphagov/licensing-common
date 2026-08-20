@@ -3,7 +3,7 @@
 prepare: sync
 
 sync:
-	uv sync
+	uv sync --active
 # =======================================================================
 # TESTING
 # =======================================================================
@@ -11,7 +11,7 @@ test: prepare-tests
 	pytest
 
 prepare-tests: prepare
-	docker compose up -d
+	mise exec -- docker compose up -d
 
 stop:
 	docker compose down
