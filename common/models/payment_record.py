@@ -8,7 +8,7 @@ from common.models.shared_models import PaymentAccount, PaymentAmount
 
 
 class PaymentRecord(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     application_reference_number = models.CharField(
         db_column="applicationRefNo", max_length=255, editable=False, unique=True
     )

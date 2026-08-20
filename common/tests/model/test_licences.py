@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from common.enums.countries import Countries, CountryCodes
-from common.models.licences import AdministrativeArea, LicenceInteraction
+from common.models.licences import AdministrativeArea, Licence, LicenceInteraction
 
 
 def test_valid_admin_area():
@@ -69,3 +69,19 @@ def test_licence_interaction_invalid_interaction_id_throws_error():
         interaction.full_clean()
 
     assert e.value.messages == [expected_error_message]
+
+
+def test_licence_id_returns_licence_code():
+    licence = Licence(
+        licence_code="1234-5-6",
+        name="test",
+        legislation_name="test",
+        url_slug="test",
+        local_government_service_list_id="test",
+        administrative_area=AdministrativeArea(
+            code=CountryCodes.ALL.value,
+            countries=[Countries.NORTHERN_IRELAND.value, Countries.ENGLAND.value],
+            name="NI,England",
+        ),
+    )
+    assert licence.id == "1234-5-6"

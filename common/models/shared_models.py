@@ -20,3 +20,7 @@ class PaymentAccount(EmbeddedModel):
     provider_specific_code_C = models.CharField(db_column="codeC", max_length=255)
     provider_specific_code_D = models.CharField(db_column="codeD", max_length=255)
     account_id = ObjectIdField(db_column="acc_id", unique=True, blank=True, null=True)
+
+    @property
+    def id(self):
+        return self.account_id

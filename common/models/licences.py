@@ -73,14 +73,14 @@ class LicenceInteraction(EmbeddedModel):
 
 
 class Licence(models.Model):
-    _id = ObjectIdField(default=bson.ObjectId, auto_created=True, editable=False, primary_key=True)
+    _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     licence_code = models.CharField(db_column="licenceCode", max_length=255, unique=True)
     name = models.CharField(max_length=255, default="")
     legislation_name = ArrayField(models.CharField(max_length=255), db_column="legislationName")
     url_slug = models.SlugField(max_length=255, db_column="urlSlug")
     local_government_service_list_id = models.IntegerField(
         db_column="lgslId"
-    )  # There exists a csv with these noted down that we could validate against..
+    )  # There exists a csv with these noted down that we could validate against.
     administrative_area = EmbeddedModelField(
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea()
     )
@@ -93,3 +93,7 @@ class Licence(models.Model):
 
     def __str__(self):
         return f"{self.licence_code}"
+
+    @property
+    def id(self):
+        return self.licence_code
