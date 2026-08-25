@@ -16,6 +16,8 @@ from common.tests.utils.tests.hydration_classes_for_testing import (
     MockNestWithValue,
 )
 
+pytestmark = pytest.mark.skip(reason="Skipping hydration utility  tests as it's a dev dependency")
+
 NAME = "Department of Mocks"
 NUM_EMPLOYEES = 30
 MOCK_DEPARTMENT_FIELDS = _get_explicitly_declared_attributes(MockDepartment)
