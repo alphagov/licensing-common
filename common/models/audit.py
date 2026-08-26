@@ -17,9 +17,11 @@ class Audit(models.Model):
         db_table = "audit"
         managed = False
 
+    # this explicitly mimics the old system as it's unclear what (if anything) relies on this being a specific format
     def __str__(self):
-        return f"{self.version}"
-
-    @property
-    def id(self):
-        return self.version
+        type_str = "Type: " + self.audit_type
+        tags_str = "Tags: " + ", ".join(f"{k}: {v}" for k, v in self.tags.items())
+        details_str = "Detail: " + ", ".join(f"{k}: {v}" for k, v in self.details.items())
+        hostname_str = "Hostname: " + self.hostname
+        timestamp_str = "Timestamp: " + self.timestamp.strftime("%Y-%m-%d %H:%M:%S")  # "2026-08-26 13:52:00"
+        return " | ".join(["[AuditEvent", type_str, tags_str, details_str, hostname_str, timestamp_str + "]"])
