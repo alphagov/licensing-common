@@ -8,7 +8,9 @@ class Audit(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     timestamp = models.DateTimeField(default=timezone.now)
     audit_type = models.CharField(db_column="auditType", max_length=255)
-    unique_tag_ids = ArrayField(models.CharField(max_length=255), db_column="uniqueTagIds", blank=True)
+    unique_tag_ids = ArrayField(
+        models.CharField(max_length=255), db_column="uniqueTagIds", blank=True, null=True, default=list
+    )
     tags = models.JSONField(default=dict)
     details = models.JSONField(db_column="detail", default=dict)
     hostname = models.CharField(max_length=255)
