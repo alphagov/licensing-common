@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-m$@=rf=e6s%v%$85w60+bh^*!^l+q&4hgqm8fv0y3qco%!n_34"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Assume running in production unless specifically told otherwise
+DEBUG = os.getenv("IS_PRODUCTION", "true").lower() not in ["true", "1", "t", "yes"]
 
 ALLOWED_HOSTS = []
 
@@ -78,7 +79,9 @@ DOCUMENTDB_PASSWORD = os.getenv("DOCUMENTDB_PASSWORD", "password")
 DOCUMENTDB_PORT = os.getenv("DOCUMENTDB_PORT", "10260")
 DOCUMENTDB_HOST = os.getenv("DOCUMENTDB_HOST", "localhost")
 DOCUMENTDB_CONN_ARGS = (
-    "tls=true&tlsAllowInvalidCertificates=true" if os.getenv("DOCUMENTDB_ALLOW_INVALID_CERTS") else "tls=true"
+    "tls=true&tlsAllowInvalidCertificates=true"
+    if os.getenv("DOCUMENTDB_ALLOW_INVALID_CERTS", "false").lower() in ["true", "1", "t", "yes"]
+    else "tls=true"
 )
 DOCUMENT_DB_CONN = (
     f"mongodb://{DOCUMENTDB_USER}:{DOCUMENTDB_PASSWORD}@{DOCUMENTDB_HOST}:{DOCUMENTDB_PORT}?{DOCUMENTDB_CONN_ARGS}"

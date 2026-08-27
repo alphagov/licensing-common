@@ -1,6 +1,7 @@
 import pytest
 from pymongo import MongoClient
 
+from common.models.audit import Audit
 from common.models.authorities import Authority
 from common.models.authority_payment_accounts import AuthorityPaymentAccounts
 from common.models.department import Department
@@ -15,6 +16,7 @@ from config import settings
 @pytest.mark.parametrize(
     "model",
     [
+        Audit,
         Authority,
         AuthorityPaymentAccounts,
         Department,
