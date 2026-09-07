@@ -8,6 +8,7 @@ __pycache__/
 
 # IDE
 .idea
+*.iml
 
 # Distribution / packaging
 .Python
