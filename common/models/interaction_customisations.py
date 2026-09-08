@@ -32,7 +32,7 @@ class Customisation(EmbeddedModel):
     department = ObjectIdField()
     purchase_code = models.CharField(db_column="purchaseCode", max_length=255, blank=True)
     published_at = models.DateTimeField(db_column="publishedDate", blank=True, null=True)
-    suspended_at = models.DateTimeField(db_column="suspendedDate", blank=True, null=True)
+    suspended_at = models.DateTimeField(db_column="suspendDate", blank=True, null=True)
     user_id = models.CharField(db_column="userId", max_length=255, blank=True)
     customisation_id = ObjectIdField(db_column="c_id", blank=True, null=True)
 
