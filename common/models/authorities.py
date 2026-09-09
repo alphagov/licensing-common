@@ -55,7 +55,7 @@ class Authority(models.Model):
     encoded_image = models.TextField(db_column="imageBase64encoded", blank=True, default="")
     licence_details = EmbeddedModelArrayField(LicenceDetails, default=list, db_column="licenceDetails")
     contact_details = EmbeddedModelField(
-        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails()
+        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails
     )
 
     class Meta:
