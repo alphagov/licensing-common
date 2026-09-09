@@ -11,7 +11,7 @@ class LicenceDetails(EmbeddedModel):
     licence_code = models.CharField(db_column="licenceCode", max_length=255)
     offered_by_authority = models.BooleanField(db_column="offeredByAuthority")
     using_gov_uk = models.BooleanField(db_column="usingGovUk")
-    authority_url = models.CharField(db_column="localAuthorityUrl", default="", blank=True)
+    authority_url = models.CharField(db_column="localAuthorityUrl", default="", blank=True, max_length=255)
 
 
 class ContactDetails(EmbeddedModel):
@@ -38,7 +38,7 @@ class Authority(models.Model):
             error_messages={"invalid_choice": "'%(value)s' is not a valid snac code."},
         ),
         db_column="snacCodes",
-        default=[],
+        default=list,
         blank=True,
         error_messages={"item_invalid": "Invalid entry:"},
     )
@@ -49,13 +49,13 @@ class Authority(models.Model):
             error_messages={"invalid_choice": "'%(value)s' is not a valid country."},
         ),
         db_column="countries",
-        default=[],
+        default=list,
         error_messages={"item_invalid": "Invalid entry:"},
     )
     encoded_image = models.TextField(db_column="imageBase64encoded", blank=True, default="")
-    licence_details = EmbeddedModelArrayField(LicenceDetails, default=[], db_column="licenceDetails")
+    licence_details = EmbeddedModelArrayField(LicenceDetails, default=list, db_column="licenceDetails")
     contact_details = EmbeddedModelField(
-        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails()
+        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails
     )
 
     class Meta:
