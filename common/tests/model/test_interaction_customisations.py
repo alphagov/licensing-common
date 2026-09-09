@@ -9,7 +9,7 @@ from common.models.shared_models import PaymentAmount
 
 def test_valid_interaction_customisation_without_customisations():
     interaction_customisation = InteractionCustomisation(
-        authority_slug_url="test-slug",
+        authority_url_slug="test-slug",
         licence_code="test-code",
         interaction_id=0,
         interaction_sub_id=999,
@@ -34,7 +34,7 @@ def test_valid_interaction_customisation_with_customisation():
     )
 
     interaction_customisation = InteractionCustomisation(
-        authority_slug_url="test-slug",
+        authority_url_slug="test-slug",
         licence_code="test-code",
         interaction_id=0,
         interaction_sub_id=999,
@@ -48,7 +48,7 @@ def test_invalid_interaction_id_interaction_customisation_throws_error():
     expected_error_message = "'1' is not a valid Interaction Id."
     with pytest.raises(ValidationError) as e:
         interaction_customisation = InteractionCustomisation(
-            authority_slug_url="test-slug",
+            authority_url_slug="test-slug",
             licence_code="test-code",
             interaction_id=1,
             interaction_sub_id=999,
