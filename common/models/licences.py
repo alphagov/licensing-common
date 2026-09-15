@@ -97,3 +97,17 @@ class Licence(models.Model):
     @property
     def id(self):
         return self.licence_code
+
+    def find_interaction(self, interaction_id: int, interaction_sub_id: int) -> LicenceInteraction | None:
+        matching_interactions = [
+            interaction
+            for interaction in self.licence_interactions
+            if interaction.interaction_id == interaction_id and interaction.interaction_sub_id == interaction_sub_id
+        ]
+        if len(matching_interactions) > 1:
+            raise RuntimeError(
+                f"Bad data, multiple matching interactions for lgil_id: {interaction_id} "
+                f"and lgil_sub_id: {interaction_sub_id} on {self.name}"
+            )
+
+        return matching_interactions[0] if matching_interactions else None
