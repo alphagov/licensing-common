@@ -6,7 +6,8 @@ from django_mongodb_backend.models import EmbeddedModel
 class PaymentAmount(EmbeddedModel):
     pence = models.IntegerField(default=0)
 
-    def to_string_in_pounds(self) -> str:
+    @property
+    def format_to_string_in_pounds(self) -> str:
         pounds = float(self.pence) / 100.0
         return f"{pounds:.2f}"
 
