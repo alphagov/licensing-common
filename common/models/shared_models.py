@@ -11,8 +11,6 @@ class PaymentAmount(EmbeddedModel):
         return f"{pounds:.2f}"
 
 
-
-
 class SupportingDocumentDefinition(EmbeddedModel):
     name = models.CharField(max_length=255, blank=True, default="")
     description = models.TextField(blank=True)
