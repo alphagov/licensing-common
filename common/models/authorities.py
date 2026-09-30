@@ -18,6 +18,7 @@ class LicenceDetails(EmbeddedModel):
     def can_apply_via_licensify(self) -> bool:
         return self.offered_by_authority and self.using_gov_uk
 
+
 class ContactDetails(EmbeddedModel):
     line_one = models.CharField(db_column="lineOne", max_length=255, default="", blank=True)
     line_two = models.CharField(db_column="lineTwo", max_length=255, default="", blank=True)
