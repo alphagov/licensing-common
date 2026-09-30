@@ -131,7 +131,7 @@ def test_find_licence_interaction_throws_error_when_multiple_licences_found(make
     )
     expected_error_message = re.compile(r"multiple matching", re.IGNORECASE)
     with pytest.raises(RuntimeError, match=expected_error_message):
-        interaction = licence.find_interaction(expected_interaction_id, expected_sub_interaction_id)
+        licence.find_interaction(expected_interaction_id, expected_sub_interaction_id)
 
 
 def test_find_licence_interaction_returns_none_when_no_licence_with_matching_code(make_licence_interactions):
