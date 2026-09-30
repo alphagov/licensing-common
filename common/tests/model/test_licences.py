@@ -94,7 +94,7 @@ def test_licence_id_returns_licence_code():
     assert licence.id == "1234-5-6"
 
 
-def test_find_licence_interaction_finds_interaction_only_when_both_ids_match(mocker, make_licence_interactions):
+def test_find_licence_interaction_finds_interaction_only_when_both_ids_match(make_licence_interactions):
     expected_interaction_id = 15
     expected_sub_interaction_id = 2
     licence= Licence(
