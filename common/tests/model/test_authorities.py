@@ -135,7 +135,7 @@ def test_authority_id_returns_url_slug():
     assert authority.id == "test-url-slug"
 
 
-def test_find_licence_detail_finds_licence_with_matching_code(mocker, make_license_details):
+def test_find_licence_detail_finds_licence_with_matching_code(make_license_details):
     expected_licence_code = "5151-5-1"
     authority = Authority(licence_details=make_license_details(["1234-2-1", expected_licence_code, "3421-3-1"]))
     licence_detail = authority.find_licence_detail(expected_licence_code)
