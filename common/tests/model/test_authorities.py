@@ -7,7 +7,6 @@ from common.models.authorities import Authority, ContactDetails, LicenceDetails
 @pytest.fixture
 def make_license_details():
     def _factory(codes=None):
-        codes = codes
         return [LicenceDetails(licence_code=code) for code in codes]
     return _factory
 
