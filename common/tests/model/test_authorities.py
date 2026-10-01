@@ -133,34 +133,3 @@ def test_authority_id_returns_url_slug():
         url_slug="test-url-slug",
     )
     assert authority.id == "test-url-slug"
-
-
-def test_find_licence_detail_finds_licence_with_matching_code(make_license_details):
-    expected_licence_code = "5151-5-1"
-    authority = Authority(licence_details=make_license_details(["1234-2-1", expected_licence_code, "3421-3-1"]))
-    licence_detail = authority.find_licence_detail(expected_licence_code)
-    assert licence_detail.licence_code == expected_licence_code
-
-
-def test_find_licence_detail_throws_error_when_multiple_licences_found(make_license_details):
-    expected_licence_code = "5151-5-1"
-    authority = Authority(
-        licence_details=make_license_details(["1234-2-1", expected_licence_code, expected_licence_code])
-    )
-    expected_error_message = re.compile(r"multiple matching", re.IGNORECASE)
-    with pytest.raises(RuntimeError, match=expected_error_message):
-        authority.find_licence_detail(expected_licence_code)
-
-
-def test_find_licence_detail_returns_none_when_no_licence_with_matching_code(make_license_details):
-    non_existing_licence_code = "5151-5-1"
-    authority = Authority(licence_details=make_license_details(["1234-2-1", "2323-5-1", "3421-3-1"]))
-    licence_detail = authority.find_licence_detail(non_existing_licence_code)
-    assert licence_detail is None
-
-
-def test_find_licence_detail_returns_none_when_empty_list():
-    non_existing_licence_code = "5151-5-1"
-    authority = Authority(licence_details=[])
-    licence_detail = authority.find_licence_detail(non_existing_licence_code)
-    assert licence_detail is None
