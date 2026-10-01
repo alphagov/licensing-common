@@ -21,7 +21,7 @@ class Customisation(EmbeddedModel):
     )
     payment_account = models.CharField(db_column="paymentAccount", max_length=255, blank=True)
     supporting_document_definitions = EmbeddedModelArrayField(
-        SupportingDocumentDefinition, db_column="supportingDocuments", default=list, blank=True
+        SupportingDocumentDefinition, db_column="supportingDocumentDefinitions", default=list, blank=True
     )
     legislation_name = models.CharField(db_column="legislation", max_length=255)
     introduction_text = models.TextField(db_column="introductionText")
