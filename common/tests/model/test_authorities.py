@@ -6,14 +6,6 @@ from django.core.exceptions import ValidationError
 from common.models.authorities import Authority, ContactDetails, LicenceDetails
 
 
-@pytest.fixture
-def make_license_details():
-    def _factory(codes=None):
-        return [LicenceDetails(licence_code=code) for code in codes]
-
-    return _factory
-
-
 def test_invalid_snac_code_throws_error():
     expected_error_message = "Invalid entry: 'test' is not a valid snac code."
 

@@ -7,17 +7,6 @@ from common.enums.countries import Countries, CountryCodes
 from common.models.licences import AdministrativeArea, Licence, LicenceInteraction
 
 
-@pytest.fixture
-def make_licence_interactions():
-    def _factory(interactions=None):
-        return [
-            LicenceInteraction(interaction_id=interaction_id, interaction_sub_id=interaction_sub_id)
-            for interaction_id, interaction_sub_id in interactions
-        ]
-
-    return _factory
-
-
 def test_valid_admin_area():
     admin_area = AdministrativeArea(
         code=CountryCodes.ALL.value,
