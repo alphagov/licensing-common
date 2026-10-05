@@ -1,5 +1,3 @@
-import re
-
 import pytest
 from django.core.exceptions import ValidationError
 
