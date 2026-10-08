@@ -3,7 +3,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from common.models.interaction_customisations import Customisation, InteractionCustomisation
+from common.models.interaction_customisation import Customisation, InteractionCustomisation
 from common.models.shared_models import PaymentAmount
 
 

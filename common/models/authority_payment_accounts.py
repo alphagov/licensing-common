@@ -7,7 +7,7 @@ from common.enums.payment_providers import PaymentProviders
 from common.models.shared_models import PaymentAccount
 
 
-class AccessPaySuiteAcceptedCards(EmbeddedModel):
+class AccessPaySuiteAcceptedPaymentType(EmbeddedModel):
     visa = models.BooleanField(db_column="visa", default=False)
     debit = models.BooleanField(db_column="delt", default=False)
     mastercard = models.BooleanField(db_column="mcrd", default=False)
@@ -16,7 +16,7 @@ class AccessPaySuiteAcceptedCards(EmbeddedModel):
     mail_or_telephone_order = models.BooleanField(db_column="moto", default=False)
 
 
-class AuthorityPaymentAccounts(models.Model):
+class AuthorityPaymentAccount(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     authority_url_slug = models.SlugField(db_column="authorityUrlSlug", max_length=255, unique=True)
     payment_provider = models.CharField(
@@ -41,7 +41,7 @@ class AuthorityPaymentAccounts(models.Model):
     callback_override_url = models.CharField(db_column="callbackOverride", max_length=255, blank=True)
     send_test_payment = models.BooleanField(db_column="sendTestPayment", default=False, blank=True)
     access_pay_suite_accepted_cards = EmbeddedModelField(
-        AccessPaySuiteAcceptedCards, db_column="accessPaySuiteAcceptedCards", blank=True
+        AccessPaySuiteAcceptedPaymentType, db_column="accessPaySuiteAcceptedCards", blank=True
     )
     worldpay_md5_shared_secret = models.CharField(db_column="worldpayMd5SharedSecret", max_length=255, blank=True)
 

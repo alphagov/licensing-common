@@ -5,7 +5,7 @@ from django_mongodb_backend.fields import EmbeddedModelArrayField, ObjectIdField
 from django_mongodb_backend.models import EmbeddedModel
 
 
-class EulaAcceptances(EmbeddedModel):
+class EulaAcceptance(EmbeddedModel):
     email = models.EmailField()
     accepted_on = models.DateTimeField(db_column="acceptedOn")
 
@@ -15,7 +15,7 @@ class Eula(models.Model):
     version = models.CharField(max_length=255, editable=False, unique=True)
     valid_from = models.DateTimeField(db_column="validFrom", default=timezone.now)
     html_text = models.TextField(db_column="htmlText")
-    acceptances = EmbeddedModelArrayField(EulaAcceptances, blank=True, null=True, default=list)
+    acceptances = EmbeddedModelArrayField(EulaAcceptance, blank=True, null=True, default=list)
 
     class Meta:
         db_table = "eula"
