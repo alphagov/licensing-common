@@ -33,6 +33,7 @@ class AdministrativeArea(EmbeddedModel):
             raise ValidationError("Invalid name")
 
 
+# TODO do we want this default?
 class LicenceForm(EmbeddedModel):
     name = models.CharField(max_length=255, default="defaultName")
     sub_form = models.IntegerField(db_column="subForm", default=0)
@@ -57,9 +58,9 @@ class LicenceInteraction(EmbeddedModel):
     supporting_documents = EmbeddedModelArrayField(
         SupportingDocumentDefinition, db_column="supportingDocuments", default=list, blank=True
     )
-    fee = EmbeddedModelField(PaymentAmount, blank=True, default=PaymentAmount())
+    fee = EmbeddedModelField(PaymentAmount, blank=True, default=PaymentAmount)
     fee_calculation_instructions = ArrayField(
-        models.TextField(), blank=True, default=[], db_column="feeCalculationInstructions"
+        models.TextField(), blank=True, default=list, db_column="feeCalculationInstructions"
     )
     default_declarations = ArrayField(models.TextField(), blank=True, default=list, db_column="defaultDeclarations")
     tacit_consent = models.CharField(
@@ -82,7 +83,7 @@ class Licence(models.Model):
         db_column="lgslId"
     )  # There exists a csv with these noted down that we could validate against.
     administrative_area = EmbeddedModelField(
-        AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea()
+        AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea
     )
     is_offered_by_county = models.BooleanField(default=False, db_column="offeredByCounty")
     licence_interactions = EmbeddedModelArrayField(LicenceInteraction, db_column="interactions", default=list)

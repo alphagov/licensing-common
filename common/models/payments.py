@@ -17,6 +17,7 @@ class PaymentStatus(EmbeddedModel):
     )
 
 
+# TODO check lambda call as default for django model
 class Payment(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     payment_id = models.CharField(db_column="id", default=lambda: str(bson.ObjectId()), editable=False)
