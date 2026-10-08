@@ -17,9 +17,13 @@ class PaymentStatus(EmbeddedModel):
     )
 
 
+def object_id_to_string():
+    return str(bson.ObjectId())
+
+
 class Payment(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
-    payment_id = models.CharField(db_column="id", default=lambda: str(bson.ObjectId()), editable=False)
+    payment_id = models.CharField(db_column="id", default=object_id_to_string, editable=False)
     application_reference = models.CharField(db_column="applicationReference", max_length=255, default="")
     amount = EmbeddedModelField(PaymentAmount, default=PaymentAmount)
     payment_account_id = models.CharField(db_column="paymentAccountId", max_length=255)

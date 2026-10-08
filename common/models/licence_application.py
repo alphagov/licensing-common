@@ -59,7 +59,7 @@ class LicenceApplication(models.Model):
     interaction_sub_id = models.IntegerField(db_column="lgilSubId")
     application_date = models.DateTimeField(db_column="applicationDate", blank=True, default=now)
     supporting_documents = EmbeddedModelArrayField(
-        SupportingDocument, db_column="applicationDocuments", default=[], blank=True
+        SupportingDocument, db_column="applicationDocuments", default=list, blank=True
     )
     application_status = EmbeddedModelField(ApplicationStatus, db_column="status")
     extracted_application_data = models.TextField(db_column="applicationData", default="", blank=True)

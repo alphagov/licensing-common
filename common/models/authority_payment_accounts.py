@@ -25,7 +25,7 @@ class AuthorityPaymentAccount(models.Model):
         choices=[(tag.value, tag.name) for tag in PaymentProviders],
         error_messages={"invalid_choice": "'%(value)s' is not a valid payment provider."},
     )
-    accounts = EmbeddedModelArrayField(PaymentAccount, db_column="accounts", default=[], blank=True, null=True)
+    accounts = EmbeddedModelArrayField(PaymentAccount, db_column="accounts", default=list, blank=True, null=True)
     merchant_id = models.CharField(db_column="merchantId", max_length=255)
     provider_shared_secret = models.CharField(db_column="providerSharedSecret", max_length=255)
     provider_shared_post_salt = models.CharField(db_column="providerSharedPostSalt", max_length=255, blank=True)
