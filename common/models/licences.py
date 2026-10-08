@@ -33,7 +33,6 @@ class AdministrativeArea(EmbeddedModel):
             raise ValidationError("Invalid name")
 
 
-# TODO do we want this default?
 class LicenceForm(EmbeddedModel):
     name = models.CharField(max_length=255, default="defaultName")
     sub_form = models.IntegerField(db_column="subForm", default=0)
