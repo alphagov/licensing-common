@@ -7,7 +7,7 @@ from common.enums.countries import Countries
 from common.enums.snac_codes import SnacCodes
 
 
-class LicenceDetails(EmbeddedModel):
+class LicenceDetail(EmbeddedModel):
     licence_code = models.CharField(db_column="licenceCode", max_length=255)
     offered_by_authority = models.BooleanField(db_column="offeredByAuthority")
     using_gov_uk = models.BooleanField(db_column="usingGovUk")
@@ -19,7 +19,7 @@ class LicenceDetails(EmbeddedModel):
         return self.offered_by_authority and self.using_gov_uk
 
 
-class ContactDetails(EmbeddedModel):
+class ContactInformation(EmbeddedModel):
     line_one = models.CharField(db_column="lineOne", max_length=255, default="", blank=True)
     line_two = models.CharField(db_column="lineTwo", max_length=255, default="", blank=True)
     line_three = models.CharField(db_column="line3", max_length=255, default="", blank=True)
@@ -58,9 +58,9 @@ class Authority(models.Model):
         error_messages={"item_invalid": "Invalid entry:"},
     )
     encoded_image = models.TextField(db_column="imageBase64encoded", blank=True, default="")
-    licence_details = EmbeddedModelArrayField(LicenceDetails, default=list, db_column="licenceDetails")
+    licence_details = EmbeddedModelArrayField(LicenceDetail, default=list, db_column="licenceDetails")
     contact_details = EmbeddedModelField(
-        ContactDetails, db_column="authorityContactDetailsHolder", default=ContactDetails
+        ContactInformation, db_column="authorityContactDetailsHolder", default=ContactInformation
     )
 
     class Meta:

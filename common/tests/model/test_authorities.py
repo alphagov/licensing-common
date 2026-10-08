@@ -1,7 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
 
-from common.models.authorities import Authority, ContactDetails, LicenceDetails
+from common.models.authority import Authority, ContactInformation, LicenceDetail
 
 
 def test_invalid_snac_code_throws_error():
@@ -18,7 +18,7 @@ def test_invalid_snac_code_throws_error():
             countries=[],
             encoded_image="test",
             licence_details=[],
-            contact_details=ContactDetails(),
+            contact_details=ContactInformation(),
         )
         authority.clean_fields(exclude=["countries"])
 
@@ -39,14 +39,14 @@ def test_invalid_country_throws_error():
             countries=["test"],
             encoded_image="",
             licence_details=[
-                LicenceDetails(
+                LicenceDetail(
                     licence_code="Test",
                     offered_by_authority=True,
                     using_gov_uk=True,
                     authority_url="",
                 )
             ],
-            contact_details=ContactDetails(),
+            contact_details=ContactInformation(),
         )
 
         authority.full_clean()
@@ -64,8 +64,8 @@ def test_snac_codes_can_be_empty():
         snac_codes=[],
         countries=["England", "NI", "Scotland", "Wales"],
         encoded_image="",
-        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
-        contact_details=ContactDetails(),
+        licence_details=[LicenceDetail(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
+        contact_details=ContactInformation(),
     )
     authority.full_clean()
 
@@ -80,8 +80,8 @@ def test_valid_authority(db_tracker, db_cleanup):
         snac_codes=["00AA"],
         countries=["England", "NI", "Scotland", "Wales"],
         encoded_image="",
-        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
-        contact_details=ContactDetails(),
+        licence_details=[LicenceDetail(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
+        contact_details=ContactInformation(),
     )
     authority.full_clean()
 
@@ -102,8 +102,8 @@ def test_cleanup_of_updated_model(db_tracker, db_cleanup):
         snac_codes=["00AA"],
         countries=["England", "NI", "Scotland", "Wales"],
         encoded_image="",
-        licence_details=[LicenceDetails(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
-        contact_details=ContactDetails(),
+        licence_details=[LicenceDetail(licence_code="Test", offered_by_authority=False, using_gov_uk=False)],
+        contact_details=ContactInformation(),
     )
 
     db_tracker.register_updated(authority._id, authority)

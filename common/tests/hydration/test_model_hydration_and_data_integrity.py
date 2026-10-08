@@ -2,11 +2,11 @@ import pytest
 from pymongo import MongoClient
 
 from common.models.audit import Audit
-from common.models.authorities import Authority
-from common.models.authority_payment_accounts import AuthorityPaymentAccounts
+from common.models.authority import Authority
+from common.models.authority_payment_accounts import AuthorityPaymentAccount
 from common.models.department import Department
-from common.models.licences import Licence
-from common.models.payments import Payment
+from common.models.licence import Licence
+from common.models.payment import Payment
 from common.models.setting import Setting
 from common.tests.utils.hydration import verify_model_against_collection
 from config import settings
@@ -18,7 +18,7 @@ from config import settings
     [
         Audit,
         Authority,
-        AuthorityPaymentAccounts,
+        AuthorityPaymentAccount,
         Department,
         Licence,
         Payment,

@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from common.enums.countries import Countries, CountryCodes
-from common.models.licences import AdministrativeArea, Licence, LicenceInteraction
+from common.models.licence import AdministrativeArea, Licence, LicenceInteraction
 
 
 def test_valid_admin_area():
