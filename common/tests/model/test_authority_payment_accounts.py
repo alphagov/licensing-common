@@ -3,7 +3,7 @@ from bson import ObjectId
 from django.core.exceptions import ValidationError
 
 from common.enums.payment_providers import PaymentProviders
-from common.models.authority_payment_accounts import (
+from common.models.authority_payment_account import (
     AccessPaySuiteAcceptedPaymentType,
     AuthorityPaymentAccount,
     PaymentAccount,

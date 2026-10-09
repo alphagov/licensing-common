@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 from common.models.audit import Audit
 from common.models.authority import Authority
-from common.models.authority_payment_accounts import AuthorityPaymentAccount
+from common.models.authority_payment_account import AuthorityPaymentAccount
 from common.models.department import Department
 from common.models.licence import Licence
 from common.models.payment import Payment
