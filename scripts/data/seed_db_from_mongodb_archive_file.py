@@ -6,13 +6,10 @@ from subprocess import DEVNULL, CalledProcessError, run
 from pymongo import MongoClient
 
 from config import settings
+from scripts.data.common import check_existing_collections, run_initial_safeguards, test_connection
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-def test_connection():
-    client.admin.command("ping")
 
 
 def check_mongo_restore():
@@ -46,26 +43,10 @@ def verify_brew_or_exit():
         sys.exit("homebrew not installed, manually install homebrew before trying again")
 
 
-def check_existing_collections(db_to_check):
-    collections = db_to_check.list_collection_names()
-    if len(collections) != 0:
-        continue_response = input("Database not empty, continue y/n? \n")
-        if continue_response.lower() != "y":
-            sys.exit("Seed aborted.")
-
-
-sys.stdout.reconfigure(line_buffering=True)
-
-if not settings.DEBUG:
-    sys.exit("Aborting, not a debug environment.")
-
-if "localhost" not in settings.DOCUMENT_DB_CONN:
-    sys.exit("Aborting, not localhost.")
-
 client = MongoClient(settings.DOCUMENT_DB_CONN)
-
 try:
-    test_connection()
+    run_initial_safeguards()
+    test_connection(client)
     check_mongo_restore()
     db = client["licensify"]
     check_existing_collections(db)

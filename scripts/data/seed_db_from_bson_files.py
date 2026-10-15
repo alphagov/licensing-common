@@ -1,3 +1,4 @@
+import logging
 import sys
 from pathlib import Path
 
@@ -6,24 +7,15 @@ from pymongo import MongoClient
 from pymongo.database import Database
 
 from config import settings
+from scripts.data.common import check_existing_collections, run_initial_safeguards, test_connection
 
-if not settings.DEBUG:
-    sys.exit("Aborting, not a debug environment.")
-
-if "localhost" not in settings.DOCUMENT_DB_CONN:
-    sys.exit("Aborting, not localhost.")
-
-client = MongoClient(settings.DOCUMENT_DB_CONN)
-
-
-def test_connection():
-    client.admin.command("ping")
-    print("Database pinged successfully.")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def seed_collection(db_to_seed: Database, data_file: Path):
     if data_file.stem in db_to_seed.list_collection_names():
-        print(f"Existing collection found for {data_file.stem}, skipping...")
+        logger.info("Existing collection found for %s, skipping...", data_file.stem)
         return
     with data_file.open("rb") as bson_file:
         # inefficient use of memory but assuming the data is no more than
@@ -32,19 +24,14 @@ def seed_collection(db_to_seed: Database, data_file: Path):
 
     if len(documents) > 0:
         db_to_seed[data_file.stem].insert_many(documents)
-        print(f"Seeded {len(documents)} documents into '{data_file.stem}'...")
+        logger.info("Seeded %s documents into %s ...", len(documents), data_file.stem)
 
 
-def check_existing_collections(db_to_check):
-    collections = db_to_check.list_collection_names()
-    if len(collections) != 0:
-        continue_response = input("Database not empty, continue y/n? \n")
-        if continue_response.lower() != "y":
-            sys.exit("Seed aborted.")
-
+run_initial_safeguards()
+client = MongoClient(settings.DOCUMENT_DB_CONN)
 
 try:
-    test_connection()
+    test_connection(client)
     db = client["licensify"]
     check_existing_collections(db)
     path_to_files = input("What is the path to the data dump folder? \n").strip("'\" ")
