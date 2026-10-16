@@ -12,9 +12,7 @@ logger.setLevel(logging.INFO)
 def check_existing_collections(db_to_check):
     collections = db_to_check.list_collection_names()
     if len(collections) != 0:
-        continue_response = input("Database not empty, continue y/n? \n")
-        if continue_response.lower() != "y":
-            sys.exit("Seed aborted.")
+        confirm_or_abort("Database has existing collections.")
 
 
 def test_connection(client: MongoClient):
@@ -28,3 +26,10 @@ def run_initial_safeguards():
 
     if "localhost" not in settings.DOCUMENT_DB_CONN:
         sys.exit("Aborting, not localhost.")
+
+
+def confirm_or_abort(confirm_prompt: str, exit_message="Seed aborted."):
+    input_message = confirm_prompt + " Enter y to continue or n to exit. \n"
+    continue_response = input(input_message)
+    if not continue_response.lower() == "y":
+        sys.exit(exit_message)

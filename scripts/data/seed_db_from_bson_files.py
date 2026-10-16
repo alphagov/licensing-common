@@ -27,13 +27,7 @@ def seed_collection(db_to_seed: Database, data_file: Path):
         logger.info("Seeded %s documents into %s ...", len(documents), data_file.stem)
 
 
-run_initial_safeguards()
-client = MongoClient(settings.DOCUMENT_DB_CONN)
-
-try:
-    test_connection(client)
-    db = client["licensify"]
-    check_existing_collections(db)
+def get_bson_files() -> list[Path]:
     path_to_files = input("What is the path to the data dump folder? \n").strip("'\" ")
     folder = Path(path_to_files)
     if not folder.is_dir():
@@ -41,7 +35,19 @@ try:
     files = list(folder.glob("*.bson"))
     if len(files) == 0:
         sys.exit("Seed aborted, no bson files found.")
-    for file in files:
+    return files
+
+
+client = MongoClient(settings.DOCUMENT_DB_CONN)
+
+try:
+    run_initial_safeguards()
+    test_connection(client)
+    db = client["licensify"]
+    check_existing_collections(db)
+
+    bson_files = get_bson_files()
+    for file in bson_files:
         seed_collection(db, file)
 
 finally:
