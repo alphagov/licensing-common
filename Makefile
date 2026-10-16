@@ -30,8 +30,8 @@ format: prepare
 # DATA/SEEDING
 # =======================================================================
 
-seed_db_from_bson_files: prepare docker-compose
+seed_db_from_bson_files: prepare
 	uv run python -m scripts.data.seed_db_from_bson_files
 
-seed_db_from_mongodb_archive_file: prepare docker-compose
+seed_db_from_mongodb_archive_file: prepare
 	uv run python -m scripts.data.seed_db_from_mongodb_archive_file
