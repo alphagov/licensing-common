@@ -6,8 +6,6 @@ from django.db import models
 from django_mongodb_backend.fields import EmbeddedModelField
 from django_mongodb_backend.models import EmbeddedModel
 
-from common.models.interaction_customisation import Customisation, InteractionCustomisation
-
 
 class GrandchildModel(EmbeddedModel):
     identifier = models.CharField(max_length=255)
