@@ -11,7 +11,7 @@ class GrandchildModel(EmbeddedModel):
     identifier = models.CharField(max_length=255)
 
     class Meta:
-        app_label = "citizen_frontend"
+        app_label = "common"
 
     def __str__(self):
         return f"{self.identifier}"
@@ -23,7 +23,7 @@ class ChildModel(EmbeddedModel):
     required_grandchild = EmbeddedModelField(GrandchildModel)
 
     class Meta:
-        app_label = "citizen_frontend"
+        app_label = "common"
 
     def __str__(self):
         return f"{self.identifier}"
@@ -35,7 +35,7 @@ class ParentModel(models.Model):
     required_child = EmbeddedModelField(ChildModel)
 
     class Meta:
-        app_label = "citizen_frontend"
+        app_label = "common"
 
     def __str__(self):
         return f"{self.identifier}"
