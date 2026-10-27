@@ -1,4 +1,4 @@
-.PHONY: test prepare stop format seed_db_from_bson_files syncseed_db_from_mongodb_archive_file
+.PHONY: test prepare stop format seed_db_from_bson_files syncseed_db_from_mongodb_archive_file test-patches
 
 prepare: sync
 
@@ -15,6 +15,8 @@ test: prepare-tests
 
 prepare-tests: prepare docker-compose
 
+test-patches: prepare
+	pytest common/tests/patches
 
 stop:
 	docker compose down
