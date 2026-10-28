@@ -59,7 +59,7 @@ class LicenceInteraction(EmbeddedModel):
     )
     fee = EmbeddedModelField(PaymentAmount, blank=True, default=PaymentAmount)
     fee_calculation_instructions = ArrayField(
-        models.TextField(), blank=True, default=list, db_column="feeCalculationInstructions"
+        models.TextField(blank=True), blank=True, default=list, db_column="feeCalculationInstructions"
     )
     default_declarations = ArrayField(models.TextField(), blank=True, default=list, db_column="defaultDeclarations")
     tacit_consent = models.CharField(
@@ -84,7 +84,7 @@ class Licence(models.Model):
     administrative_area = EmbeddedModelField(
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea
     )
-    is_offered_by_county = models.BooleanField(default=False, db_column="offeredByCounty")
+    is_offered_by_county = models.BooleanField(default=False, db_column="offeredByCounty", blank=True, null=True)
     licence_interactions = EmbeddedModelArrayField(LicenceInteraction, db_column="interactions", default=list)
 
     class Meta:
