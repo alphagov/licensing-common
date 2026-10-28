@@ -34,10 +34,10 @@ class AdministrativeArea(EmbeddedModel):
 
 
 class LicenceForm(EmbeddedModel):
-    name = models.CharField(max_length=255, default="defaultName")
+    name = models.CharField(max_length=255, default="defaultName", blank=True)
     sub_form = models.IntegerField(db_column="subForm", default=0)
-    form_ref_number = models.CharField(max_length=255, db_column="formRefNo")
-    file_name = models.CharField(max_length=255, default="licenceForm.pdf", db_column="fileName")
+    form_ref_number = models.CharField(max_length=255, db_column="formRefNo", blank=True)
+    file_name = models.CharField(max_length=255, default="licenceForm.pdf", db_column="fileName", blank=True)
     file_size = models.IntegerField(db_column="fileSizeInBytes", default=0)
     form_version = models.IntegerField(db_column="formVersion", default=1)
 
@@ -50,7 +50,7 @@ class LicenceInteraction(EmbeddedModel):
         error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
     )
     interaction_sub_id = models.IntegerField(db_column="lgilSubId", default=0)
-    licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName")
+    licence_interaction_name = models.CharField(max_length=255, db_column="licenceInteractionName", blank=True)
     display_title = models.CharField(max_length=255, db_column="displayTitle", blank=True, default="")
     form = EmbeddedModelField(LicenceForm, blank=True, null=True)
     sub_forms = EmbeddedModelArrayField(LicenceForm, db_column="subForms", blank=True, default=list)
@@ -78,9 +78,7 @@ class Licence(models.Model):
     name = models.CharField(max_length=255, default="")
     legislation_name = ArrayField(models.CharField(max_length=255), db_column="legislationName")
     url_slug = models.SlugField(max_length=255, db_column="urlSlug")
-    local_government_service_list_id = models.IntegerField(
-        db_column="lgslId"
-    )  # There exists a csv with these noted down that we could validate against.
+    local_government_service_list_id = models.IntegerField(db_column="lgslId")
     administrative_area = EmbeddedModelField(
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea
     )
