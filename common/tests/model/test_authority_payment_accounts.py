@@ -10,8 +10,8 @@ from common.models.authority_payment_account import (
 )
 
 
-def test_valid_authority_payment_accounts_with_civica():
-    authority_payment_accounts = AuthorityPaymentAccount(
+def test_valid_authority_payment_account_with_civica():
+    authority_payment_account = AuthorityPaymentAccount(
         authority_url_slug="test",
         payment_provider=PaymentProviders.CIVICA,
         accounts=[
@@ -41,11 +41,11 @@ def test_valid_authority_payment_accounts_with_civica():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_accounts.full_clean()
+    authority_payment_account.full_clean()
 
 
-def test_valid_authority_payment_accounts_without_civica():
-    authority_payment_accounts = AuthorityPaymentAccount(
+def test_valid_authority_payment_account_without_civica():
+    authority_payment_account = AuthorityPaymentAccount(
         authority_url_slug="test",
         payment_provider=PaymentProviders.NORTHGATE,
         accounts=[
@@ -67,7 +67,7 @@ def test_valid_authority_payment_accounts_without_civica():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_accounts.full_clean()
+    authority_payment_account.full_clean()
 
 
 def test_invalid_payment_provider():
@@ -79,8 +79,8 @@ def test_invalid_payment_provider():
     assert expected_error_message in e.value.message_dict["payment_provider"]
 
 
-def test_authority_payment_accounts_id_returns_url_slug():
-    authority_payment_accounts = AuthorityPaymentAccount(
+def test_authority_payment_account_id_returns_url_slug():
+    authority_payment_account = AuthorityPaymentAccount(
         authority_url_slug="test-url-slug",
         payment_provider=PaymentProviders.NORTHGATE,
         accounts=[],
@@ -93,6 +93,6 @@ def test_authority_payment_accounts_id_returns_url_slug():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_accounts.full_clean()
+    authority_payment_account.full_clean()
 
-    assert authority_payment_accounts.id == "test-url-slug"
+    assert authority_payment_account.id == "test-url-slug"

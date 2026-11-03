@@ -7,7 +7,7 @@ from django.utils.timezone import now
 
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.virus_check_status import VirusCheckStatus
-from common.models.licence_application import ApplicationStatus, LicenceApplication, SupportingDocument
+from common.models.licence_application import ApplicationStatus, LicenceApplication, SupportingDocument, Service
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
@@ -20,9 +20,11 @@ def test_valid_licence_application():
         application_pdf=SupportingDocument(
             definition=SupportingDocumentDefinition(), _id=ObjectId(), virus_check_status=VirusCheckStatus.CLEAN.value
         ),
-        licence_code="test",
-        interaction_id=InteractionIdCodes.APPLY.value,
-        interaction_sub_id=0,
+        service=Service(
+            licence_code="test licence code",
+            interaction_id=InteractionIdCodes.APPLY.value,
+            interaction_sub_id=0,
+        ),
         application_date=now(),
         application_status=ApplicationStatus(
             is_data_available=False, is_being_processed=False, collected_by_authority=False
@@ -46,10 +48,16 @@ def test_valid_licence_application():
 def test_invalid_interaction_id_in_licence_application_service_throws_error():
     expected_error_message = "'1' is not a valid Interaction Id."
     with pytest.raises(ValidationError) as e:
-        licence_application = LicenceApplication(interaction_id=1)
+        licence_application = LicenceApplication(
+            service = Service(
+                licence_code="test licence code",
+                interaction_id=1,
+                interaction_sub_id=0
+            )
+        )
         licence_application.full_clean()
 
-    assert expected_error_message in e.value.message_dict["interaction_id"]
+    assert expected_error_message in e.value.message_dict["service"]
 
 
 def test_is_virus_detected_in_file():
