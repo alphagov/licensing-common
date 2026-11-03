@@ -7,7 +7,7 @@ from django.utils.timezone import now
 
 from common.enums.interaction_id_codes import InteractionIdCodes
 from common.enums.virus_check_status import VirusCheckStatus
-from common.models.licence_application import ApplicationStatus, LicenceApplication, SupportingDocument, Service
+from common.models.licence_application import ApplicationStatus, LicenceApplication, Service, SupportingDocument
 from common.models.shared_models import PaymentAmount, SupportingDocumentDefinition
 
 
@@ -49,11 +49,7 @@ def test_invalid_interaction_id_in_licence_application_service_throws_error():
     expected_error_message = "'1' is not a valid Interaction Id."
     with pytest.raises(ValidationError) as e:
         licence_application = LicenceApplication(
-            service = Service(
-                licence_code="test licence code",
-                interaction_id=1,
-                interaction_sub_id=0
-            )
+            service=Service(licence_code="test licence code", interaction_id=1, interaction_sub_id=0)
         )
         licence_application.full_clean()
 
