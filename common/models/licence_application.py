@@ -27,6 +27,17 @@ class SupportingDocument(EmbeddedModel):
         return self.virus_check_status == VirusCheckStatus.FOUND_VIRUS.value
 
 
+class Service(EmbeddedModel):
+    licence_code = models.CharField(db_column="licenceCode", max_length=255)
+    interaction_id = models.IntegerField(
+        db_column="lgilId",
+        choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
+        default=InteractionIdCodes.APPLY.value,
+        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
+    )
+    interaction_sub_id = models.IntegerField(db_column="lgilSubId")
+
+
 class ApplicationStatus(EmbeddedModel):
     is_data_available = models.BooleanField(db_column="isDataAvailable", default=False)
     is_being_processed = models.BooleanField(db_column="isBeingProcessed", default=False)
@@ -49,14 +60,7 @@ class LicenceApplication(models.Model):
     licence = models.CharField(db_column="licence", max_length=255, default="", blank=True)
     has_supporting_documents_online = models.BooleanField(db_column="supportingDocumentsOnline", default=False)
     application_pdf = EmbeddedModelField(SupportingDocument, db_column="applicationDocument")
-    licence_code = models.CharField(db_column="licenceCode", max_length=255)
-    interaction_id = models.IntegerField(
-        db_column="lgilId",
-        choices=[(tag.value, tag.name) for tag in InteractionIdCodes],
-        default=InteractionIdCodes.APPLY.value,
-        error_messages={"invalid_choice": "'%(value)s' is not a valid Interaction Id."},
-    )
-    interaction_sub_id = models.IntegerField(db_column="lgilSubId")
+    service = EmbeddedModelField(Service, db_column="service", blank=True)
     application_date = models.DateTimeField(db_column="applicationDate", blank=True, default=now)
     supporting_documents = EmbeddedModelArrayField(
         SupportingDocument, db_column="applicationDocuments", default=list, blank=True
