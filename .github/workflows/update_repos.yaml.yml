@@ -31,7 +31,7 @@ jobs:
           git config --global user.name "the bot account name or github-actions[bot]"
           git config --global user.email "the bot account email or 41898282+github-actions[bot]@users.noreply.github.com"
           
-          BRANCH_NAME="automated-submodule-~update-${GITHUB_SHA::7}"
+          BRANCH_NAME="automated-submodule-update-${GITHUB_SHA::7}"
           git checkout -b $BRANCH_NAME
           
           git submodule update --remote
