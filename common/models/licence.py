@@ -83,7 +83,9 @@ class Licence(models.Model):
         AdministrativeArea, db_column="administrativeArea", default=AdministrativeArea
     )
     is_offered_by_county = models.BooleanField(default=False, db_column="offeredByCounty", blank=True, null=True)
-    licence_interactions = EmbeddedModelArrayField(LicenceInteraction, db_column="interactions", default=list, blank=True)
+    licence_interactions = EmbeddedModelArrayField(
+        LicenceInteraction, db_column="interactions", default=list, blank=True
+    )
 
     class Meta:
         db_table = "elmsLicences"
