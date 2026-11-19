@@ -2,8 +2,8 @@ import pytest
 from bson import ObjectId
 from django.core.exceptions import ValidationError
 
-from common.models.authority import Authority
 from common.enums.payment_providers import PaymentProviders
+from common.models.authority import Authority
 from common.models.authority_payment_account import (
     AccessPaySuiteAcceptedPaymentType,
     AuthorityPaymentAccount,
@@ -12,10 +12,11 @@ from common.models.authority_payment_account import (
 
 AUTHORITY = Authority(url_slug="test-url-slug")
 
+
 def test_valid_authority_payment_account_with_civica():
 
     authority_payment_account = AuthorityPaymentAccount(
-        authority_url_slug= AUTHORITY,
+        authority_url_slug=AUTHORITY,
         payment_provider=PaymentProviders.CIVICA,
         accounts=[
             PaymentAccount(
