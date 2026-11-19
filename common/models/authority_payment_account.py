@@ -56,8 +56,8 @@ class AuthorityPaymentAccount(models.Model):
         managed = False
 
     def __str__(self):
-        return f"{self.authority_url_slug}"
+        return f"{self.authority_url_slug_id}"
 
     @property
     def id(self):
-        return self.authority_url_slug
+        return self.authority_url_slug_id

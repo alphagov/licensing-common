@@ -2,6 +2,7 @@ import pytest
 from bson import ObjectId
 from django.core.exceptions import ValidationError
 
+from common.models.authority import Authority
 from common.enums.payment_providers import PaymentProviders
 from common.models.authority_payment_account import (
     AccessPaySuiteAcceptedPaymentType,
@@ -9,10 +10,12 @@ from common.models.authority_payment_account import (
     PaymentAccount,
 )
 
+AUTHORITY = Authority(url_slug="test-url-slug")
 
 def test_valid_authority_payment_account_with_civica():
+
     authority_payment_account = AuthorityPaymentAccount(
-        authority_url_slug="test",
+        authority_url_slug= AUTHORITY,
         payment_provider=PaymentProviders.CIVICA,
         accounts=[
             PaymentAccount(
@@ -41,12 +44,13 @@ def test_valid_authority_payment_account_with_civica():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_account.full_clean()
+    authority_payment_account.clean_fields(exclude=["authority_url_slug"])
+    authority_payment_account.clean()
 
 
 def test_valid_authority_payment_account_without_civica():
     authority_payment_account = AuthorityPaymentAccount(
-        authority_url_slug="test",
+        authority_url_slug=AUTHORITY,
         payment_provider=PaymentProviders.NORTHGATE,
         accounts=[
             PaymentAccount(
@@ -67,21 +71,21 @@ def test_valid_authority_payment_account_without_civica():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_account.full_clean()
+    authority_payment_account.clean_fields(exclude=["authority_url_slug"])
+    authority_payment_account.clean()
 
 
 def test_invalid_payment_provider():
     expected_error_message = "'test' is not a valid payment provider."
     with pytest.raises(ValidationError) as e:
         invalid_payment_provider = AuthorityPaymentAccount(payment_provider="test")
-        invalid_payment_provider.full_clean()
-
+        invalid_payment_provider.clean_fields()
     assert expected_error_message in e.value.message_dict["payment_provider"]
 
 
 def test_authority_payment_account_id_returns_url_slug():
     authority_payment_account = AuthorityPaymentAccount(
-        authority_url_slug="test-url-slug",
+        authority_url_slug=AUTHORITY,
         payment_provider=PaymentProviders.NORTHGATE,
         accounts=[],
         merchant_id="test",
@@ -93,6 +97,7 @@ def test_authority_payment_account_id_returns_url_slug():
         access_pay_suite_accepted_cards=AccessPaySuiteAcceptedPaymentType(),
         worldpay_md5_shared_secret="test",
     )
-    authority_payment_account.full_clean()
+    authority_payment_account.clean_fields(exclude=["authority_url_slug"])
+    authority_payment_account.clean()
 
-    assert authority_payment_account.id == "test-url-slug"
+    assert authority_payment_account.id == AUTHORITY.url_slug
