@@ -49,7 +49,6 @@ class Customisation(EmbeddedModel):
         return bool(docs) and all(doc.is_mandatory for doc in docs)
 
 
-
 class InteractionCustomisation(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
     authority_url_slug = models.CharField(db_column="authorityUrlSlug", max_length=255)
