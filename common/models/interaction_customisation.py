@@ -36,6 +36,19 @@ class Customisation(EmbeddedModel):
     user_id = models.CharField(db_column="userId", max_length=255, blank=True)
     customisation_id = ObjectIdField(db_column="c_id", blank=True, null=True)
 
+    @property
+    def format_processing_days(self):
+        number = self.number_of_days_to_process
+        day_type = "working" if self.is_processing_days_working_days else "calendar"
+        unit = "days" if number > 1 else "day"
+        return f"{number} {day_type} {unit}"
+
+    @property
+    def all_supporting_documents_are_mandatory(self):
+        docs = self.supporting_document_definitions
+        return bool(docs) and all(doc.is_mandatory for doc in docs)
+
+
 
 class InteractionCustomisation(models.Model):
     _id = ObjectIdField(default=bson.ObjectId, unique=True, editable=False, primary_key=True)
