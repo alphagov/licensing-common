@@ -1,44 +1,44 @@
 import os
+import socket
 import tempfile
 import time
-import socket
 
 import clamd
 import pytest
 
-from common.services.virus_scanner import VirusScanner, ScanResult, FileTooLargeException, VirusScannerUnavailableError
+from common.services.virus_scanner import FileTooLargeException, ScanResult, VirusScanner, VirusScannerUnavailableError
 
 """
 These tests run against a ClamAV container running in Docker, ensure container is up and running
 """
 
+
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_clam_av():
-        host = os.getenv("VIRUS_SCANNER_HOST", "localhost")
-        port = int(os.getenv("VIRUS_SCANNER_PORT", "3310"))
-        timeout_seconds = 180.0
-        poll_interval = 1.0
-        deadline = time.monotonic() + timeout_seconds
-        last_error = None
+    host = os.getenv("VIRUS_SCANNER_HOST", "localhost")
+    port = int(os.getenv("VIRUS_SCANNER_PORT", "3310"))
+    timeout_seconds = 180.0
+    poll_interval = 1.0
+    deadline = time.monotonic() + timeout_seconds
+    last_error = None
 
-        while time.monotonic() < deadline:
-            try:
-                with socket.create_connection((host, port), timeout=2.0) as sock:
-                    sock.settimeout(2.0)
-                    sock.sendall(b"zPING\x00")
-                    reply = sock.recv(64)
-                    if b"PONG" in reply:
-                        return
-                    last_error = f"Unexpected reply: {reply!r}"
-            except OSError as exc:
-                last_error = exc
+    while time.monotonic() < deadline:
+        try:
+            with socket.create_connection((host, port), timeout=2.0) as sock:
+                sock.settimeout(2.0)
+                sock.sendall(b"zPING\x00")
+                reply = sock.recv(64)
+                if b"PONG" in reply:
+                    return
+                last_error = f"Unexpected reply: {reply!r}"
+        except OSError as exc:
+            last_error = exc
 
-            time.sleep(poll_interval)
+        time.sleep(poll_interval)
 
-        pytest.fail(
-            f"ClamAV at {host}:{port} did not respond with PONG within "
-            f"{timeout_seconds}s. Last error: {last_error}"
-        )
+    pytest.fail(
+        f"ClamAV at {host}:{port} did not respond with PONG within {timeout_seconds}s. Last error: {last_error}"
+    )
 
 
 def test_virus_scanner_connection_ping(wait_for_clam_av):
