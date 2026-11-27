@@ -7,7 +7,8 @@ dependencies = [
     "django>=5.2.16",
     "django-mongodb-backend>=5.2.3",
     "pymongo>=4.17.0",
-    "clamd==1.0.2"
+    "clamd==1.0.2",
+    "pytest-mock>=3.17.0",
 ]
 
 [tool.pytest.ini_options]
