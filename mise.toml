@@ -13,3 +13,5 @@ DOCUMENTDB_IMAGE = "ghcr.io/documentdb/documentdb/documentdb-local@sha256:8c8a71
 DOCUMENTDB_HOST = "localhost"
 DOCUMENTDB_ALLOW_INVALID_CERTS = "true"
 IS_PRODUCTION = "false"
+VIRUS_SCANNER_HOST = "localhost"
+VIRUS_SCANNER_PORT = "3310"
