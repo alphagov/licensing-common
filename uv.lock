@@ -181,7 +181,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "clamd", specifier = "==1.0.2" },
     { name = "clamd", specifier = ">=1.0.2" },
     { name = "django", specifier = ">=5.2.16" },
     { name = "django-mongodb-backend", specifier = ">=5.2.3" },
